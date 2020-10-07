@@ -1,0 +1,4 @@
+/assets/*
+
+/bin/*.o
+/build/*.o
