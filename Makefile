@@ -14,7 +14,7 @@ EXEC1 = lsc
 _DEPS =
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o input.o
+_OBJ = main.o input.o data.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)

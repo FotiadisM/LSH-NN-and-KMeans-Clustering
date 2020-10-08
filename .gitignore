@@ -1,4 +1,7 @@
-/assets/*
+bin/*
+build/*
+assets/*
+logs/*
 
-/bin/*.o
-/build/*.o
+!.gitkeep
+

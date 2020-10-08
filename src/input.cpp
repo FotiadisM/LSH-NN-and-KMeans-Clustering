@@ -15,7 +15,7 @@ char *Input::getCmdOption(char **begin, char **end, const string &option)
         return *itr;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 Input::Input()
@@ -46,13 +46,13 @@ Input::~Input()
 
 int Input::parseCmdOptions(int argc, char *argv[])
 {
-    char *val = NULL;
+    char *val = nullptr;
 
-    if ((val = this->getCmdOption(argv, argv + argc, "-d")) != NULL)
+    if ((val = this->getCmdOption(argv, argv + argc, "-d")) != nullptr)
     {
         try
         {
-            this->inputFile.open(val, ifstream::in);
+            this->inputFile.open(val, ifstream::in | ifstream::binary);
         }
         catch (const ifstream::failure &e)
         {
@@ -61,8 +61,13 @@ int Input::parseCmdOptions(int argc, char *argv[])
             return -1;
         }
     }
+    else
+    {
+        cerr << "Input file required" << endl;
+        return -1;
+    }
 
-    if ((val = this->getCmdOption(argv, argv + argc, "-q")) != NULL)
+    if ((val = this->getCmdOption(argv, argv + argc, "-q")) != nullptr)
     {
         try
         {
@@ -76,20 +81,24 @@ int Input::parseCmdOptions(int argc, char *argv[])
             return -1;
         }
     }
+    else
+    {
+        cerr << "Query file required" << endl;
+    }
 
-    if ((val = this->getCmdOption(argv, argv + argc, "-k")) != NULL)
+    if ((val = this->getCmdOption(argv, argv + argc, "-k")) != nullptr)
     {
         sscanf(val, "%d", &(this->k));
         cout << this->k << endl;
     }
 
-    if ((val = this->getCmdOption(argv, argv + argc, "-L")) != NULL)
+    if ((val = this->getCmdOption(argv, argv + argc, "-L")) != nullptr)
     {
         sscanf(val, "%d", &(this->L));
         cout << this->L << endl;
     }
 
-    if ((val = this->getCmdOption(argv, argv + argc, "-o")) != NULL)
+    if ((val = this->getCmdOption(argv, argv + argc, "-o")) != nullptr)
     {
         try
         {
@@ -104,13 +113,13 @@ int Input::parseCmdOptions(int argc, char *argv[])
         }
     }
 
-    if ((val = this->getCmdOption(argv, argv + argc, "-N")) != NULL)
+    if ((val = this->getCmdOption(argv, argv + argc, "-N")) != nullptr)
     {
         sscanf(val, "%d", &(this->N));
         cout << this->N << endl;
     }
 
-    if ((val = this->getCmdOption(argv, argv + argc, "-R")) != NULL)
+    if ((val = this->getCmdOption(argv, argv + argc, "-R")) != nullptr)
     {
         sscanf(val, "%f", &(this->R));
         cout << this->R << endl;
