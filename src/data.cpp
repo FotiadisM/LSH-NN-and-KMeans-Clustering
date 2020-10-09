@@ -46,22 +46,10 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
 
     this->d = 28 * 28;
 
-    // if ((this->data = new int *[this->n]) == nullptr)
-    // {
-    //     perror("new");
-    //     return -1;
-    // }
-
     for (int i = 0; i < this->n; i++)
     {
         vector<int> image(this->d);
-        // try
-        // {
-        //     this->data[i] = new int[this->d];
-        // }
-        // catch (const bad_alloc &e)
-        // {
-        // }
+
         for (int j = 0; j < this->d; j++)
         {
             inputFile.read((char *)(&b), sizeof(b));

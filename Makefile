@@ -9,12 +9,12 @@ ODIR = build
 IDIR = include
 SDIR = src
 
-EXEC1 = lsc
+EXEC1 = lsh
 
-_DEPS =
+_DEPS = data.h input.h LSH.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o input.o data.o
+_OBJ = main.o input.o data.o LSH.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
@@ -36,8 +36,6 @@ run:
 valgrind:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC1) \
 	-d /home/fotiadis/Downloads/project/pr/assets/t10k-images-idx3-ubyte \
-	-k 10 \
-	-R 2.4 \
 
 clean:
 	rm -f $(ODIR)/*.o

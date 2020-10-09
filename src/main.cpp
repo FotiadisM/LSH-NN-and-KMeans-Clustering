@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "../include/input.h"
-#include "../include/data.h"
+#include "../include/LSH.h"
 
 using namespace std;
 
@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
 {
     Data data;
     Input *input;
+    LSH *lsh;
 
     if ((input = new Input()) == nullptr)
     {
@@ -25,7 +26,10 @@ int main(int argc, char *argv[])
     data.InitMnistDataSet(input->inputFile);
     cout << "done" << endl;
 
+    lsh = new LSH(input->k, input->L, input->N, data);
+
     delete input;
+    delete lsh;
 
     return 0;
 }
