@@ -9,7 +9,7 @@ private:
 public:
     int n; // number of data
     int d; // dimension
-    std::vector<std::vector<int>> data;
+    std::vector<std::vector<uint8_t>> data;
 
     int InitMnistDataSet(std::ifstream &inputFile);
 };

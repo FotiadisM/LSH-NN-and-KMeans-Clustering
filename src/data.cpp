@@ -48,7 +48,7 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
 
     for (int i = 0; i < this->n; i++)
     {
-        vector<int> image(this->d);
+        vector<uint8_t> image;
 
         for (int j = 0; j < this->d; j++)
         {
@@ -58,7 +58,7 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
                 cerr << "read() from input file failed" << endl;
                 return -1;
             }
-            image.push_back(int(b));
+            image.push_back(b);
         }
         this->data.push_back(image);
     }

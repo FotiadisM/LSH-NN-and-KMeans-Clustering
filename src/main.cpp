@@ -1,4 +1,7 @@
 #include <iostream>
+#include <cstdlib>
+#include <vector>
+#include <ctime>
 
 #include "../include/input.h"
 #include "../include/LSH.h"
@@ -10,6 +13,8 @@ int main(int argc, char *argv[])
     Data data;
     Input *input;
     LSH *lsh;
+
+    srand(time(NULL));
 
     if ((input = new Input()) == nullptr)
     {
@@ -27,6 +32,10 @@ int main(int argc, char *argv[])
     cout << "done" << endl;
 
     lsh = new LSH(input->k, input->L, input->N, data);
+    if (lsh->Run() == -1)
+    {
+        cerr << "LSH::Run() failed" << endl;
+    }
 
     delete input;
     delete lsh;

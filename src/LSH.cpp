@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 #include <cmath>
 
 #include "../include/LSH.h"
@@ -11,9 +12,7 @@ LSH::LSH(int k, int L, int N, Data &data, uint32_t w, uint32_t m)
     this->M = uint32_t(pow(2, 32 / this->k));
 }
 
-LSH::~LSH()
-{
-}
+LSH::~LSH() {}
 
 int LSH::Run()
 {
@@ -25,9 +24,9 @@ int LSH::Run()
         {
             int h = 0;
 
-            if ((h = this->calculate_h()) != -1)
+            if ((h = this->calculate_h(j)) != -1)
             {
-                H[j] = h;
+                // H[j] = h;
             }
         }
     }
@@ -35,16 +34,25 @@ int LSH::Run()
     return 0;
 }
 
-int LSH::calculate_h()
+int LSH::calculate_h(int j)
 {
     for (int i = 0; i < data.d; i++)
     {
         int a = 0;
+        cout << int(this->data.data[j][i]);
+        a = this->calculate_a(this->data.data[j][i]); // need to pass xi
 
-        a = this->calculate_a(i); // need to pass xi
+        cout << " a: " << a << endl;
     }
+
+    return 0;
 }
 
-int LSH::calculate_a(int x)
+int LSH::calculate_a(uint8_t x)
 {
+    int s = (rand() % this->w);
+
+    cout << " - " << (int(x) - s) << " w " << int(this->w);
+
+    return (int(x) - s) / int(this->w);
 }
