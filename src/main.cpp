@@ -11,8 +11,8 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     Data data;
-    Input *input;
     LSH *lsh;
+    Input *input;
 
     srand(time(NULL));
 
