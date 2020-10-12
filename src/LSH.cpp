@@ -20,14 +20,17 @@ LSH::~LSH() {}
 
 int LSH::Run()
 {
-    // for every hash table
+    hashData();
+}
+
+void LSH::hashData()
+{
+    // L hashtables συνολο
+    // 1 hastable == 1 g(x)
+    // 1 g(x) θελει k h(x)
+    // 1 h(x) θελει d s
     for (int i = 0; i < this->L; i++)
     {
-        // L hashtables συνολο
-        // 1 hastable == 1 g(x)
-        // 1 g(x) θελει k h(x)
-        // 1 h(x) θελει d s
-
         // stores all the (s0, s1, ..., sd-1) * k times
         // Θα πρεπει να αποθηκευουμε ολα τα s για να τα χρησιμοποιουμε στα query
         // αρα θα πρεπει να βαλουμε αυτο το vector σαν μεταβλητη της LSH
@@ -42,35 +45,17 @@ int LSH::Run()
         for (int j = 0; j < this->data.n; j++)
         {
             uint32_t g = 0;
-            // stores all the h0, h1, ..., hk-1
-            vector<uint32_t> H(this->k);
 
-            // find g(x) after calculating k h(x)
             for (int l = 0; l < this->k; l++)
             {
-                H[l] = this->calculate_h(this->data.data[j], S[l]);
-                cout << H[l] << " ";
                 g = g << 32 / this->k;
-                g = g | H[l];
+                g = g | this->calculate_h(this->data.data[j], S[l]);
             }
             cout << "g(x) = " << g << endl;
 
-            // g(j) = [h0(j) | h1(j) | ... | hk-1(j)] = 0 - 2^32
-            // ισως κανουμε g(j) = g(j) mod 8 ή 16 για να μειωσουμε τον χωρο
-            // και να αποθηκευουμε καθε εικονα σε πιο μπακετ μπηκε με ακριβεια, δηλαδη το αρχικο g(j)
-            //HashTable[g(j)] = image
+            // store image in HashTables[i][g]
         }
     }
-
-    // g(query)
-    // for i=0 : i < this->L) {
-    //}
-    // for all hashTabless
-    //    get all images in hashTabless[i][g(query)]
-
-    //filter images to find the N closest to the query
-
-    return 0;
 }
 
 void LSH::calculate_s(vector<vector<int>> &S)

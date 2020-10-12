@@ -29,7 +29,6 @@ int main(int argc, char *argv[])
     }
 
     data.InitMnistDataSet(input->inputFile);
-    cout << "done" << endl;
 
     lsh = new LSH(input->k, input->L, input->N, data);
     if (lsh->Run() == -1)
