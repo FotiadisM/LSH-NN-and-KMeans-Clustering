@@ -15,7 +15,6 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
         cerr << "Input file io error" << endl;
         return -1;
     }
-    cout << __builtin_bswap32(a) << endl;
 
     // number of images
     inputFile.read((char *)(&a), sizeof(a));
@@ -24,7 +23,6 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
         cerr << "Input file io error" << endl;
         return -1;
     }
-    cout << __builtin_bswap32(a) << endl;
     // from big endian to low endian
     this->n = __builtin_bswap32(a);
 
@@ -34,7 +32,6 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
         cerr << "Input file io error" << endl;
         return -1;
     }
-    cout << __builtin_bswap32(a) << endl;
 
     inputFile.read((char *)(&a), sizeof(a));
     if (!inputFile)
@@ -42,7 +39,6 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
         cerr << "Input file io error" << endl;
         return -1;
     }
-    cout << __builtin_bswap32(a) << endl;
 
     this->d = 28 * 28;
 
