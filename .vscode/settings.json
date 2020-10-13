@@ -44,6 +44,8 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp",
-        "climits": "cpp"
+        "climits": "cpp",
+        "ctime": "cpp",
+        "list": "cpp"
     }
 }

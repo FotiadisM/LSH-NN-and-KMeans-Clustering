@@ -11,10 +11,10 @@ SDIR = src
 
 EXEC1 = lsh
 
-_DEPS = data.h input.h LSH.h
+_DEPS = data.h input.h LSH.h hashTable.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o input.o data.o LSH.o
+_OBJ = main.o input.o data.o LSH.o hashTable.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
@@ -29,11 +29,11 @@ $(BDIR)/$(EXEC1): $(OBJ)
 
 run:
 	./$(BDIR)/$(EXEC1) \
-	-d /home/fotiadis/Downloads/project/pr/assets/t10k-images-idx3-ubyte
+	-d /home/michalis/Downloads/train
 
 valgrind:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC1) \
-	-d /home/fotiadis/Downloads/project/pr/assets/t10k-images-idx3-ubyte
+	-d /home/michalis/Downloads/train
 
 clean:
 	rm -f $(ODIR)/*.o
