@@ -21,6 +21,8 @@ LSH::~LSH() {}
 int LSH::Run()
 {
     hashData();
+
+    return 0;
 }
 
 void LSH::hashData()
@@ -92,5 +94,5 @@ uint32_t LSH::calculate_h(const vector<uint8_t> &x, const vector<int> &s)
 
 int LSH::calculate_a(const uint8_t &xi, const int &si)
 {
-    return (int(xi) - si) / int(this->w);
+    return floor(double((int(xi) - si)) / double(this->w));
 }
