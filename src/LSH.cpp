@@ -50,7 +50,7 @@ uint32_t LSH::calculate_g(const vector<uint8_t> &x, const vector<vector<int>> &S
     for (int i = 0; i < this->k; i++)
     {
         g = g << 32 / this->k;
-        g = g | this->calculate_h(x, S[k]);
+        g = g | this->calculate_h(x, S[i]);
     }
 
     return g;
