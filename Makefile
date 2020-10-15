@@ -29,7 +29,9 @@ $(BDIR)/$(EXEC1): $(OBJ)
 
 run:
 	./$(BDIR)/$(EXEC1) \
-	-d /home/fotiadis/Downloads/project/pr/assets/t10k-images-idx3-ubyte
+	-d /home/fotiadis/Downloads/project/pr/assets/t10k \
+	-o /home/fotiadis/Downloads/project/pr/logs/logs.txt \
+	-N 10
 
 valgrind:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC1) \

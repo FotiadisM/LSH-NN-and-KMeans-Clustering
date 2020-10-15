@@ -65,6 +65,24 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
     return 0;
 }
 
+int Data::ReadQueryFile(std::ifstream &queryFile)
+{
+    uint8_t b;
+
+    for (int i = 0; i < this->d; i++)
+    {
+        queryFile.read((char *)(&b), sizeof(b));
+        if (!queryFile)
+        {
+            cerr << "read() from query file failed" << endl;
+            return -1;
+        }
+        this->query.push_back(b);
+    }
+
+    return 0;
+}
+
 int Data::EuclideanDistance(std::vector<uint8_t> &p1, std::vector<uint8_t> &p2)
 {
     int d = 0;
@@ -89,9 +107,9 @@ int Data::ManhattanDistance(const std::vector<uint8_t> &p1, const std::vector<ui
     return d;
 }
 
-vector<uint8_t> Data::GetClosestNeighbors(const vector<uint8_t> &point, const vector<vector<uint8_t>> &data, const int &N)
+vector<pair<int, vector<uint8_t>>> Data::GetClosestNeighbors(const vector<uint8_t> &point, const vector<vector<uint8_t>> &data, const int &N)
 {
-    vector<uint8_t> result;
+    vector<pair<int, vector<uint8_t>>> result;
     vector<pair<int, vector<uint8_t>>> costs;
 
     for (auto &element : data)
@@ -100,7 +118,7 @@ vector<uint8_t> Data::GetClosestNeighbors(const vector<uint8_t> &point, const ve
     }
 
     auto cmp = [](pair<int, vector<uint8_t>> left, pair<int, vector<uint8_t>> right) {
-        return left.first < right.first;
+        return left.first > right.first;
     };
     priority_queue<pair<int, vector<uint8_t>>, vector<pair<int, vector<uint8_t>>>, decltype(cmp)> q(cmp);
 
@@ -109,12 +127,11 @@ vector<uint8_t> Data::GetClosestNeighbors(const vector<uint8_t> &point, const ve
         q.push(element);
     }
 
-    // pop from queue and return
-
-    // for (int i = 0; i < N; i++)
-    // {
-    //     result.push_back((vector<uint8_t>)q.pop().second);
-    // }
+    for (int i = 0; i < N; i++)
+    {
+        result.push_back(q.top());
+        q.pop();
+    }
 
     return result;
 }

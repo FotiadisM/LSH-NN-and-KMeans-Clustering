@@ -21,9 +21,15 @@ LSH::LSH(int k, int L, int N, Data &data, uint32_t w, uint32_t m)
 
 LSH::~LSH() {}
 
-int LSH::Run()
+int LSH::Run(const vector<uint8_t> &query, ofstream &outputFile)
 {
     hashData();
+
+    if (exec_query(this->data.data[0], outputFile) == -1)
+    {
+        cerr << "Run::exec_query() failed" << endl;
+        return 0;
+    }
 
     return 0;
 }
@@ -35,8 +41,6 @@ void LSH::hashData()
         for (int j = 0; j < this->data.n; j++)
         {
             uint32_t g = this->calculate_g(this->data.data[j], this->tables[i].S);
-
-            cout << "g(x) = " << g << endl;
 
             // store image in HashTables[i][g]
         }
@@ -80,4 +84,26 @@ uint32_t LSH::calculate_h(const vector<uint8_t> &x, const vector<int> &s)
 int LSH::calculate_a(const uint8_t &xi, const int &si)
 {
     return floor(double((int(xi) - si)) / double(this->w));
+}
+
+int LSH::exec_query(const vector<uint8_t> &query, ofstream &outputFile)
+{
+    vector<vector<uint8_t>> possible_neighbors;
+    vector<pair<int, vector<uint8_t>>> actual_neigbors;
+
+    for (auto &table : this->tables)
+    {
+        uint32_t g = this->calculate_g(query, table.S);
+
+        // possible_neighbors.push_back( fetch from hashtable )
+    }
+
+    actual_neigbors = this->data.GetClosestNeighbors(query, this->data.data, this->N);
+
+    for (auto &neighbor : actual_neigbors)
+    {
+        outputFile << "Distance: " << neighbor.first << endl;
+    }
+
+    return 0;
 }
