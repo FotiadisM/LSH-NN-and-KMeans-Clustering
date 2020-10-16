@@ -35,7 +35,9 @@ run:
 
 valgrind:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC1) \
-	-d /home/michalis/Downloads/train
+	-d /home/fotiadis/Downloads/project/pr/assets/t10k \
+	-o /home/fotiadis/Downloads/project/pr/logs/logs.txt \
+	-N 10
 
 clean:
 	rm -f $(ODIR)/*.o

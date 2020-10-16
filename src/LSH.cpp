@@ -43,6 +43,7 @@ void LSH::hashData()
             uint32_t g = this->calculate_g(this->data.data[j], this->tables[i].S);
 
             // store image in HashTables[i][g]
+            this->tables[i].insertItem(g, this->data.data[i]);
         }
     }
 }
