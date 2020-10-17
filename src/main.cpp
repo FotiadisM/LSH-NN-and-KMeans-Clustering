@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     // }
 
     lsh = new LSH(input.k, input.L, input.N, data);
-    if (lsh->Run(data.query, input.outputFile) == -1)
+    if (lsh->Run(data.data[0], input.outputFile) == -1)
     {
         cerr << "LSH::Run() failed" << endl;
     }
