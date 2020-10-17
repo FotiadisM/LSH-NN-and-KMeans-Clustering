@@ -11,16 +11,7 @@ hashTable::hashTable(int indexSize, int k, int d, int w)
     this->calculate_s(this->S, k, d, w);
 }
 
-hashTable::~hashTable()
-{
-    for (auto &bucket : this->table)
-    {
-        for (auto &node : bucket)
-        {
-            delete node;
-        }
-    }
-}
+hashTable::~hashTable() {}
 
 void hashTable::calculate_s(vector<vector<int>> &S, int k, int d, int w)
 {
@@ -35,27 +26,18 @@ void hashTable::calculate_s(vector<vector<int>> &S, int k, int d, int w)
     }
 }
 
-BucketNode::BucketNode(uint32_t &mg, vector<uint8_t> &mpoint)
-    : g(mg), point(mpoint) {}
-
-BucketNode::~BucketNode() {}
-
 void hashTable::insertItem(uint32_t &g, vector<uint8_t> &point)
 {
-    // this->table[index].push_back(item);
-    BucketNode *node = new BucketNode(g, point);
-
-    this->table[g % this->indexSize].push_back(node);
-
-    // this->table[g % this->indexSize].push_back(make_pair(g, point));
+    this->table[g % this->indexSize].push_back(make_pair(g, ref(point)));
 }
-vector<vector<uint8_t>> hashTable::getItems(uint32_t &g)
+
+vector<reference_wrapper<vector<uint8_t>>> hashTable::getItems(const uint32_t &g)
 {
-    vector<vector<uint8_t>> result;
+    vector<reference_wrapper<vector<uint8_t>>> result;
 
     for (auto &bucket : this->table[g % this->indexSize])
     {
-        result.push_back(bucket->point);
+        result.push_back(bucket.second);
     }
 
     return result;

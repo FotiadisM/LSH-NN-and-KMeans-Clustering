@@ -1,4 +1,5 @@
 #include <iostream>
+#include <functional>
 #include <queue>
 #include <cmath>
 
@@ -28,6 +29,7 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
     }
     // from big endian to low endian
     this->n = __builtin_bswap32(a);
+    cout << "number of images: " << this->n << endl;
 
     inputFile.read((char *)(&a), sizeof(a));
     if (!inputFile)
@@ -127,7 +129,9 @@ vector<pair<int, vector<uint8_t>>> Data::GetClosestNeighbors(const vector<uint8_
         q.push(element);
     }
 
-    for (int i = 0; i < N; i++)
+    int min = (size_t(N) < q.size()) ? N : q.size();
+
+    for (int i = 0; i < min; i++)
     {
         result.push_back(q.top());
         q.pop();

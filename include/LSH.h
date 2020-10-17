@@ -14,7 +14,7 @@ private:
     uint32_t w, m, M;
     // stores (m^i)modM from i=0 to i = d-1 so as to no recompute
     std::vector<uint32_t> md;
-    std::vector<hashTable> tables;
+    std::vector<hashTable *> tables;
 
     void hashData();
     void calculate_s(std::vector<std::vector<int>> &S);
