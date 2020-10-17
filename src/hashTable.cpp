@@ -1,105 +1,62 @@
 #include <iostream>
+
 #include "../include/hashTable.h"
 
 using namespace std;
 
-hashTable::hashTable(int k, Data &data, uint32_t w, uint32_t m)
-    : k(k), L(L), N(N), data(data), w(w), m(m)
+hashTable::hashTable(int indexSize, int k, int d, int w)
+    : indexSize(indexSize)
 {
-    this->bucketNum = this->data.n / 16;
-
-    this->M = uint32_t(pow(2, 32 / this->k));
-
-    this->md.resize(this->data.d, 0);
-    this->md[1] = this->m % this->M;
-
-    cout << "m: " << this->m << " M: " << this->M << endl;
-    cout << this->md.size() << " " << this->md[1] << endl;
-
-    hashData();
+    this->table.resize(indexSize);
+    this->calculate_s(this->S, k, d, w);
 }
 
 hashTable::~hashTable()
 {
-
-}
-
-void hashTable::insertItem()
-{
-
-}
-
-void hashTable::printHashTable()
-{
-
-}
-
-void hashTable::hashData()
-{
-    // L hashtables συνολο
-    // 1 hastable == 1 g(x)
-    // 1 g(x) θελει k h(x)
-    // 1 h(x) θελει d s
-    // stores all the (s0, s1, ..., sd-1) * k times
-    // Θα πρεπει να αποθηκευουμε ολα τα s για να τα χρησιμοποιουμε στα query
-    // αρα θα πρεπει να βαλουμε αυτο το vector σαν μεταβλητη της LSH
-    // θα το αλλαξω αργοτερα
-    vector<vector<int>> S(this->k, vector<int>(this->data.d)); // k * d array
-
-    // calculate all the s and store them (meaning find all the h(x) that will be used
-    // in this Li hashtable)
-    this->calculate_s(S);
-
-    // iterate the data, for each image, hash it and store in the hash table
-    for (int j = 0; j < this->data.n; j++)
+    for (auto &bucket : this->table)
     {
-        uint32_t g = 0;
-
-        for (int l = 0; l < this->k; l++)
+        for (auto &node : bucket)
         {
-            g = g << 32 / this->k;
-            g = g | this->calculate_h(this->data.data[j], S[l]);
-        }
-        cout << "g(x) = " << g%(this->data.n / 16) << endl;
-
-        // insert(apotelesma g, j)
-    }
-
-}
-
-void hashTable::calculate_s(vector<vector<int>> &S)
-{
-    for (int i = 0; i < this->k; i++)
-    {
-        for (int j = 0; j < this->data.d; j++)
-        {
-            S[i][j] = (rand() % this->w);
+            delete node;
         }
     }
 }
 
-uint32_t hashTable::calculate_h(const vector<uint8_t> &x, const vector<int> &s)
+void hashTable::calculate_s(vector<vector<int>> &S, int k, int d, int w)
 {
-    uint32_t h = uint32_t(calculate_a(x[this->data.d - 1], s[this->data.d - 1])) % this->M;
+    S.resize(k, vector<int>(d));
 
-    for (int i = this->data.d - 2; i >= 0; i--)
+    for (int i = 0; i < k; i++)
     {
-        if (this->md[this->data.d - 1 - i] == 0)
+        for (int j = 0; j < d; j++)
         {
-            this->md[this->data.d - 1 - i] = (this->md[this->data.d - 2 - i] * this->md[1]) % this->M;
-        }
-
-        int a = calculate_a(x[i], s[i]);
-        if (a != 0) // saving some compute time
-        {
-            h += (((a % this->M) * this->md[this->data.d - 1 - i]) % this->M) % this->M;
+            S[i][j] = (rand() % w);
         }
     }
-
-    return h % this->M;
 }
 
-int hashTable::calculate_a(const uint8_t &xi, const int &si)
+BucketNode::BucketNode(uint32_t &mg, vector<uint8_t> &mpoint)
+    : g(mg), point(mpoint) {}
+
+BucketNode::~BucketNode() {}
+
+void hashTable::insertItem(uint32_t &g, vector<uint8_t> &point)
 {
-    return floor(double((int(xi) - si)) / double(this->w));
+    // this->table[index].push_back(item);
+    BucketNode *node = new BucketNode(g, point);
+
+    this->table[g % this->indexSize].push_back(node);
+
+    // this->table[g % this->indexSize].push_back(make_pair(g, point));
+}
+vector<vector<uint8_t>> hashTable::getItems(uint32_t &g)
+{
+    vector<vector<uint8_t>> result;
+
+    for (auto &bucket : this->table[g % this->indexSize])
+    {
+        result.push_back(bucket->point);
+    }
+
+    return result;
 }

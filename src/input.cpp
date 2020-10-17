@@ -84,25 +84,24 @@ int Input::parseCmdOptions(int argc, char *argv[])
     else
     {
         cerr << "Query file required" << endl;
+        // return -1;
     }
 
     if ((val = this->getCmdOption(argv, argv + argc, "-k")) != nullptr)
     {
         sscanf(val, "%d", &(this->k));
-        cout << this->k << endl;
     }
 
     if ((val = this->getCmdOption(argv, argv + argc, "-L")) != nullptr)
     {
         sscanf(val, "%d", &(this->L));
-        cout << this->L << endl;
     }
 
     if ((val = this->getCmdOption(argv, argv + argc, "-o")) != nullptr)
     {
         try
         {
-            this->outputFile.open(val, ofstream::out);
+            this->outputFile.open(val, ofstream::out | ofstream::trunc);
         }
         catch (const ofstream::failure &e)
         {
@@ -116,13 +115,11 @@ int Input::parseCmdOptions(int argc, char *argv[])
     if ((val = this->getCmdOption(argv, argv + argc, "-N")) != nullptr)
     {
         sscanf(val, "%d", &(this->N));
-        cout << this->N << endl;
     }
 
     if ((val = this->getCmdOption(argv, argv + argc, "-R")) != nullptr)
     {
         sscanf(val, "%f", &(this->R));
-        cout << this->R << endl;
     }
 
     return 0;
