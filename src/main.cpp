@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     srand(time(NULL));
 
-    if (input.parseCmdOptions(argc, argv) == -1)
+    if (input.parseCmdLSHOptions(argc, argv) == -1)
     {
         cerr << "Failed to parse command line input" << endl;
         return -1;
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     //     return -1;
     // }
 
-    lsh = new LSH(input.k, input.L, input.N, data);
+    lsh = new LSH(input.lsh_k, input.L, input.N, data);
     if (lsh->Run(data.data[0], input.outputFile) == -1)
     {
         cerr << "LSH::Run() failed" << endl;
