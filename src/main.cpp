@@ -5,6 +5,7 @@
 
 #include "../include/input.h"
 #include "../include/LSH.h"
+#include "../include/hyperCube.h"
 
 using namespace std;
 
@@ -34,13 +35,23 @@ int main(int argc, char *argv[])
     //     return -1;
     // }
 
-    lsh = new LSH(input.k, input.L, input.N, data);
-    if (lsh->Run(data.data[0], input.outputFile) == -1)
+    // lsh = new LSH(input.k, input.L, input.N, data);
+    // if (lsh->Run(data.data[0], input.outputFile) == -1)
+    // {
+    //     cerr << "LSH::Run() failed" << endl;
+    // }
+
+    // delete lsh;
+
+    int indexSize = 5;
+    hyperCube* hc = new hyperCube(input.R, indexSize, data, input.k, data.d);
+    if (hc->hyperCubeRun() == -1)
     {
-        cerr << "LSH::Run() failed" << endl;
+        cerr << "hyperCubeRun() failed" << endl;
     }
 
-    delete lsh;
+    // delete hc;
+
 
     return 0;
 }

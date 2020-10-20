@@ -1,4 +1,4 @@
-CC = g++
+CC = g++ -std=c++11
 
 OFLAGS = -std=c++11 -O3
 CFLAGS = -g3 -Wall -Wextra
@@ -11,10 +11,10 @@ SDIR = src
 
 EXEC1 = lsh
 
-_DEPS = data.h input.h LSH.h hashTable.h
+_DEPS = data.h input.h LSH.h hashTable.h hyperCube.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o input.o data.o LSH.o hashTable.o
+_OBJ = main.o input.o data.o LSH.o hashTable.o hyperCube.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
@@ -29,14 +29,14 @@ $(BDIR)/$(EXEC1): $(OBJ)
 
 run:
 	./$(BDIR)/$(EXEC1) \
-	-d /home/fotiadis/Downloads/project/pr/assets/t10k \
-	-o /home/fotiadis/Downloads/project/pr/logs/logs.txt \
+	-d /home/michalis/Downloads/project/train \
+	-o /home/michalis/Downloads/project/logs.txt \
 	-N 10
 
 valgrind:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC1) \
-	-d /home/fotiadis/Downloads/project/pr/assets/t10k \
-	-o /home/fotiadis/Downloads/project/pr/logs/logs.txt \
+	-d /home/michalis/Downloads/project/train \
+	-o /home/michalis/Downloads/project/logs.txt \
 	-N 10
 
 clean:
