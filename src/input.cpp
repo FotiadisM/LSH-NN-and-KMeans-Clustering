@@ -1,8 +1,10 @@
 #include <iostream>
+#include <sstream>
+#include <iterator>
+#include <vector>
 #include <algorithm>
 #include <cstring>
-
-#include <stdio.h>
+#include <string>
 
 #include "../include/input.h"
 
@@ -25,7 +27,6 @@ Input::Input()
     inputFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     queryFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     outputFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    confFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 }
 
 Input::~Input()
@@ -152,9 +153,11 @@ int Input::parseCmdClusterOptions(const int &argc, char *argv[])
 
     if ((val = this->getCmdOption(argv, argv + argc, "-c")) != nullptr)
     {
+        ifstream confFile;
+
         try
         {
-            this->confFile.open(val, ifstream::in);
+            confFile.open(val, ifstream::in);
         }
         catch (const ifstream::failure &e)
         {
@@ -163,6 +166,46 @@ int Input::parseCmdClusterOptions(const int &argc, char *argv[])
             cerr << "Failed to open " << val << endl;
             return -1;
         }
+
+        for (string line; std::getline(confFile, line);)
+        {
+            istringstream ss(line);
+            istream_iterator<string> begin(ss), end;
+
+            vector<string> options(begin, end);
+
+            this->L = 3;
+            this->lsh_k = 4;
+            this->M = 10;
+            this->cube_k = 3;
+            this->probes = 2;
+
+            if (!options[0].compare("number_of_clusters"))
+            {
+            }
+            else if (!options[0].compare("number_of_vector_hash_tables"))
+            {
+                this->L = stoi(options[1]);
+            }
+            else if (!options[0].compare("number_of_vector_hash_functions"))
+            {
+                this->lsh_k = stoi(options[1]);
+            }
+            else if (!options[0].compare("max_number_M_hypercube"))
+            {
+                this->M = stoi(options[1]);
+            }
+            else if (!options[0].compare("number_of_hypercube_dimensions"))
+            {
+                this->cube_k = stoi(options[1]);
+            }
+            else if (!options[0].compare("number_of_probes"))
+            {
+                this->probes = stoi(options[1]);
+            }
+        }
+
+        confFile.close();
     }
     else
     {

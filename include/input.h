@@ -20,7 +20,7 @@ public:
     float R;
     bool complete;
     Method m;
-    std::ifstream inputFile, queryFile, confFile;
+    std::ifstream inputFile, queryFile;
     std::ofstream outputFile;
 
     Input();
