@@ -24,7 +24,10 @@ private:
     Data &data;
     hashTable* ht;
     std::vector<f*> fTable;
+    uint32_t M;
 
+    uint32_t calculate_h(const std::vector<uint8_t> &x, const std::vector<int> &s);
+    int calculate_a(const uint8_t &xi, const int &si);
     void hashData();
 
 public:

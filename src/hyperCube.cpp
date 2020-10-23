@@ -18,10 +18,12 @@ f::f()
     cout << "i do nothing" << endl;
 }
 
+
 f::~f()
 {
 
 }
+
 
 int f::calculate_f(std::string key)
 {
@@ -46,10 +48,15 @@ int f::calculate_f(std::string key)
     return -1;
 }
 
+
+// k == d' if i remember correctly
 hyperCube::hyperCube(int R, int indexSize, Data &data, int k, int d, uint32_t w)
     : R(R), indexSize(indexSize), k(k), d(d), w(w), data(data)
 {
+    this->M = uint32_t(pow(2, 32 / this->k));
+
     this->ht = new hashTable(indexSize, k, d, w);
+    
     // initialize array of f functions
     for (int i=0; i<k; i++) {
         f* f_instance = new f();
@@ -57,10 +64,12 @@ hyperCube::hyperCube(int R, int indexSize, Data &data, int k, int d, uint32_t w)
     }
 }
 
+
 hyperCube::~hyperCube()
 {
 
 }
+
 
 int hyperCube::hyperCubeRun()
 {
@@ -81,12 +90,41 @@ int hyperCube::hyperCubeRun()
     return 0;
 }
 
+
+uint32_t hyperCube::calculate_h(const vector<uint8_t> &x, const vector<int> &s)
+{
+    uint32_t h = uint32_t(calculate_a(x[this->data.d - 1], s[this->data.d - 1])) % this->M;
+
+    for (int i = this->data.d - 2; i >= 0; i--)
+    {
+        if (this->md[this->data.d - 1 - i] == 0)
+        {
+            this->md[this->data.d - 1 - i] = (this->md[this->data.d - 2 - i] * this->md[1]) % this->M;
+        }
+
+        int a = calculate_a(x[i], s[i]);
+        if (a != 0) // saving some compute time
+        {
+            h += (((a % this->M) * this->md[this->data.d - 1 - i]) % this->M) % this->M;
+        }
+    }
+
+    return h % this->M;
+}
+
+int hyperCube::calculate_a(const uint8_t &xi, const int &si)
+{
+    return floor(double((int(xi) - si)) / double(this->w));
+}
+
 void hyperCube::hashData()
 {
 
 // 8a kanw calculate mia h tin opoia 8a petaw stin f kai 8a mou dinei 0 h 1
 // kai istera oles autes tis times 8a tis enwsw se ena megalo string to 
 // opoio 8a mpei sto ht-hc
+
+    // s = s + std::to_string(1);
 
     for (int j = 0; j < this->data.n; j++)
     {
@@ -97,6 +135,7 @@ void hyperCube::hashData()
 
         int h = rand() % 300;
 
+        // cout << this->fTable[0]->calculate_f(std::to_string(h)) << endl;
         
 
         // calculate_f and glue the resaults together to big string
@@ -104,10 +143,12 @@ void hyperCube::hashData()
     }
 }
 
+
 void hyperCube::hyperCubeInsert(std::string s)
 {
     cout << "String is : " << s << endl;
 }
+
 
 list<string> hyperCube::hammingDist(std::string s)
 {
