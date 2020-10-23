@@ -33,6 +33,7 @@ public:
     kmeansplusplus(const int &clusters, char *m, Data &data);
     ~kmeansplusplus();
 
+    int Run();
     int Run(const int &lsh_k, const int &L);
     int Run(const int &cube_k, const int &M, const int &probes);
     int Run(const int &lsh_k, const int &L, const int &cube_k, const int &M, const int &probes);
