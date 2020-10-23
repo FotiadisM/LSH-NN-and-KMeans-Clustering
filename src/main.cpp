@@ -35,10 +35,9 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    char method[] = "Complete";
-    kmeans = new kmeansplusplus(input.clusters, method, data);
+    kmeans = new kmeansplusplus(input.clusters, data);
 
-    kmeans->Run(input.lsh_k, input.L, input.cube_k, input.M, input.probes);
+    kmeans->Run();
 
     // if (data.ReadQueryFile(input.queryFile) == -1)
     // {

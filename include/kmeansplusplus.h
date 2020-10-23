@@ -27,14 +27,15 @@ private:
 
     void initCentroids();
     uint32_t minDistancefromCentroids(const std::vector<uint8_t> &point);
-    int findNextCentroid(const std::vector<double> &P, const double x, const std::vector<int> centroidIndexes); // used only for initalization
+    int findNextCentroid(const std::vector<double> &P, const double x); // used only for initalization
+    int minCentroid(const std::vector<uint8_t> &point);
 
 public:
-    kmeansplusplus(const int &clusters, char *m, Data &data);
+    kmeansplusplus(const int &clusters, Data &data);
+    kmeansplusplus(const int &clusters, const int &lsh_k, const int &L, Data &data);
+    kmeansplusplus(const int &clusters, const int &cube_k, const int &M, const int &probes, Data &data);
+    kmeansplusplus(const int &clusters, const int &lsh_k, const int &L, const int &cube_k, const int &M, const int &probes, Data &data);
     ~kmeansplusplus();
 
     int Run();
-    int Run(const int &lsh_k, const int &L);
-    int Run(const int &cube_k, const int &M, const int &probes);
-    int Run(const int &lsh_k, const int &L, const int &cube_k, const int &M, const int &probes);
 };

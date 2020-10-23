@@ -2,79 +2,62 @@
 #include <cmath>
 #include <cstring>
 #include <random>
+#include <chrono>
 #include <algorithm>
 
 #include "../include/kmeansplusplus.h"
 
 using namespace std;
 
-kmeansplusplus::kmeansplusplus(const int &mClusters, char *m, Data &mData)
+kmeansplusplus::kmeansplusplus(const int &mClusters, Data &mData)
     : clusters(mClusters), data(mData)
 {
-    if (!strcmp(m, "Classic"))
-        this->method = _Classic;
-    else if (!strcmp(m, "LSH"))
-        this->method = _LSH;
-    else if (!strcmp(m, "Hypercube"))
-        this->method = _Hypercube;
-    else if (!strcmp(m, "Complete"))
-        this->method = _Complete;
-    else
-    {
-        cout << "Unknown option: " << m << endl;
-    }
+    this->method = _Classic;
+}
+
+kmeansplusplus::kmeansplusplus(const int &clusters, const int &lsh_k, const int &L, Data &data)
+    : clusters(clusters), data(data), lsh_k(lsh_k), L(L)
+{
+    this->method = _LSH;
+}
+
+kmeansplusplus::kmeansplusplus(const int &clusters, const int &cube_k, const int &M, const int &probes, Data &data)
+    : clusters(clusters), data(data), cube_k(cube_k), M(M), probes(probes)
+{
+    this->method = _Hypercube;
+}
+
+kmeansplusplus::kmeansplusplus(const int &clusters, const int &lsh_k, const int &L, const int &cube_k, const int &M, const int &probes, Data &data)
+    : clusters(clusters), data(data), lsh_k(lsh_k), L(L), cube_k(cube_k), M(M), probes(probes)
+{
+    this->method = _Complete;
 }
 
 kmeansplusplus::~kmeansplusplus() {}
 
-// classic
-int kmeansplusplus::Run() { return 0; }
-
-//lsh
-int kmeansplusplus::Run(const int &lsh_k, const int &L)
+int kmeansplusplus::Run()
 {
-    this->lsh_k = lsh_k;
-    this->L = L;
-
-    return 0;
-}
-
-//hypercube
-int kmeansplusplus::Run(const int &cube_k, const int &M, const int &probes)
-{
-    this->cube_k = cube_k;
-    this->M = M;
-    this->probes = probes;
-
-    return 0;
-}
-
-//complete
-int kmeansplusplus::Run(const int &lsh_k, const int &L, const int &cube_k, const int &M, const int &probes)
-{
-    this->lsh_k = lsh_k;
-    this->L = L;
-    this->cube_k = cube_k;
-    this->M = M;
-    this->probes = probes;
-
     this->initCentroids();
 
-    //do until change very small ? how to count change ? what small means
-    // assign each point to closest centroid
-    // for every centroid find mean distance and move it ? for every centroid return total distance moved
+    for (int j = 0; j < 10; j++) // while change != minimum or 0, change it later
+    {
+        vector<vector<int>> clustering(this->clusters); // holds all data points for every centroid
+
+        for (int j = 0; j < this->data.n; j++)
+        {
+            clustering[this->minCentroid(this->data.data[j])].push_back(j);
+        }
+    }
 
     return 0;
 }
 
 void kmeansplusplus::initCentroids()
 {
-    default_random_engine re;
-    vector<int> centroidIndexes(this->clusters); // storing points that are picked to be ceontroids so as not to be reused
+    default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
 
     // picking first centroid at random
-    centroidIndexes[0] = rand() % this->data.n;
-    this->centroids.push_back(this->data.data[centroidIndexes[0]]);
+    this->centroids.push_back(this->data.data[rand() % this->data.n]);
 
     for (int i = 1; i < this->clusters; i++)
     {
@@ -92,16 +75,15 @@ void kmeansplusplus::initCentroids()
         P[0] = 0;
         for (int j = 1; j <= this->data.n; j++)
         {
-            double Di = double(this->minDistancefromCentroids(this->data.data[j]));
+            double Di = this->minDistancefromCentroids(this->data.data[j]);
 
-            P[j] = pow(Di / maxDi, 2) + P[j - 1]; // overflow!!, Di/maxDi??
+            P[j] = pow(Di / maxDi, 2) + P[j - 1];
         }
 
-        uniform_real_distribution<double> unif(double(0), P[this->data.n]);
+        uniform_real_distribution<double> unif(0.0, P[this->data.n]);
         double x = unif(re);
 
-        centroidIndexes.push_back(this->findNextCentroid(P, x, centroidIndexes) - 1);
-        this->centroids.push_back(this->data.data[centroidIndexes[i]]);
+        this->centroids.push_back(this->data.data[this->findNextCentroid(P, x) - 1]);
     }
 }
 
@@ -117,18 +99,33 @@ uint32_t kmeansplusplus::minDistancefromCentroids(const vector<uint8_t> &point)
     return (D.size() == 0) ? 0 : *min_element(begin(D), end(D));
 }
 
-int kmeansplusplus::findNextCentroid(const vector<double> &P, const double x, const vector<int> centroidIndexes)
+int kmeansplusplus::findNextCentroid(const vector<double> &P, const double x)
 {
     for (int i = 1; i <= this->data.n; i++)
     {
-        if (find(centroidIndexes.begin(), centroidIndexes.end(), i - 1) == centroidIndexes.end())
+        if (x <= P[i])
         {
-            if (x <= P[i])
-            {
-                return i;
-            }
+            cout << i - 1 << endl;
+            return i;
         }
     }
 
     return -1;
+}
+
+int kmeansplusplus::minCentroid(const vector<uint8_t> &point)
+{
+    int index, minDistance = INT32_MAX;
+
+    for (int i = 0; i < this->clusters; i++)
+    {
+        int d = this->data.ManhattanDistance(this->centroids[i], point);
+        if (d < minDistance)
+        {
+            minDistance = d;
+            index = i;
+        }
+    }
+
+    return index;
 }
