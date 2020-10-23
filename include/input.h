@@ -3,23 +3,15 @@
 #include <iostream>
 #include <fstream>
 
-enum Method
-{
-    _Classic,
-    _LSH,
-    _Hypercube
-};
-
 class Input
 {
 private:
     char *getCmdOption(char **begin, char **end, const std::string &option);
 
 public:
-    int lsh_k, cube_k, L, N, M, probes;
+    int lsh_k, cube_k, L, N, M, probes, clusters;
     float R;
-    bool complete;
-    Method m;
+    char *method;
     std::ifstream inputFile, queryFile;
     std::ofstream outputFile;
 

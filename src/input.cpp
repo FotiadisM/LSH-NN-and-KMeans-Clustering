@@ -180,28 +180,33 @@ int Input::parseCmdClusterOptions(const int &argc, char *argv[])
             this->cube_k = 3;
             this->probes = 2;
 
-            if (!options[0].compare("number_of_clusters"))
+            if (!options[0].compare("number_of_clusters:"))
             {
+                this->clusters = stoi(options[1]);
             }
-            else if (!options[0].compare("number_of_vector_hash_tables"))
+            else if (!options[0].compare("number_of_vector_hash_tables:"))
             {
                 this->L = stoi(options[1]);
             }
-            else if (!options[0].compare("number_of_vector_hash_functions"))
+            else if (!options[0].compare("number_of_vector_hash_functions:"))
             {
                 this->lsh_k = stoi(options[1]);
             }
-            else if (!options[0].compare("max_number_M_hypercube"))
+            else if (!options[0].compare("max_number_M_hypercube:"))
             {
                 this->M = stoi(options[1]);
             }
-            else if (!options[0].compare("number_of_hypercube_dimensions"))
+            else if (!options[0].compare("number_of_hypercube_dimensions:"))
             {
                 this->cube_k = stoi(options[1]);
             }
-            else if (!options[0].compare("number_of_probes"))
+            else if (!options[0].compare("number_of_probes:"))
             {
                 this->probes = stoi(options[1]);
+            }
+            else
+            {
+                cout << "unknown option in .conf file" << endl;
             }
         }
 
@@ -215,26 +220,10 @@ int Input::parseCmdClusterOptions(const int &argc, char *argv[])
 
     if ((val = this->getCmdOption(argv, argv + argc, "-complete")) != nullptr)
     {
-        this->complete = true;
-    }
-    else
-    {
-        this->complete = false;
     }
 
     if ((val = this->getCmdOption(argv, argv + argc, "-m")) != nullptr)
     {
-        if (!strcmp(val, "Callic"))
-            this->m = _Classic;
-        else if (!strcmp(val, "LSH"))
-            this->m = _LSH;
-        else if (!strcmp(val, "Hypercube"))
-            this->m = _Hypercube;
-        else
-        {
-            cout << "unknown method: " << val << endl;
-            return -1;
-        }
     }
 
     if ((val = this->getCmdOption(argv, argv + argc, "-o")) != nullptr)

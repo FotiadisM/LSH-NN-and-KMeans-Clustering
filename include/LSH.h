@@ -25,7 +25,7 @@ private:
     int exec_query(const std::vector<uint8_t> &query, std::ofstream &outputFile);
 
 public:
-    LSH(int k, int L, int N, Data &data, uint32_t w = 52, uint32_t m = uint32_t(pow(2, 30) - 5));
+    LSH(int k, int L, int N, Data &data, uint32_t w = 10, uint32_t m = uint32_t(pow(2, 30) - 5));
     ~LSH();
 
     int Run(const std::vector<uint8_t> &query, std::ofstream &outputFile);

@@ -4,13 +4,14 @@
 #include <ctime>
 
 #include "../include/input.h"
-#include "../include/LSH.h"
+#include "../include/kmeansplusplus.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    LSH *lsh;
+    // LSH *lsh;
+    kmeansplusplus *kmeans;
     Data data;
     Input input;
 
@@ -34,6 +35,11 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    char method[] = "Complete";
+    kmeans = new kmeansplusplus(input.clusters, method, data);
+
+    kmeans->Run(input.lsh_k, input.L, input.cube_k, input.M, input.probes);
+
     // if (data.ReadQueryFile(input.queryFile) == -1)
     // {
     //     cerr << "Data::ReadQueryFile() failed" << endl;
@@ -47,6 +53,7 @@ int main(int argc, char *argv[])
     // }
 
     // delete lsh;
+    delete kmeans;
 
     return 0;
 }
