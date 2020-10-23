@@ -13,14 +13,11 @@ private:
     Data &data;
     uint32_t w, m, M;
     // stores (m^i)modM from i=0 to i = d-1 so as to no recompute
-    std::vector<uint32_t> md;
+    // std::vector<uint32_t> md;
     std::vector<hashTable *> tables;
 
     void hashData();
-    void calculate_s(std::vector<std::vector<int>> &S);
     uint32_t calculate_g(const std::vector<uint8_t> &x, const std::vector<std::vector<int>> &S);
-    uint32_t calculate_h(const std::vector<uint8_t> &x, const std::vector<int> &s);
-    int calculate_a(const uint8_t &xi, const int &si);
 
     int exec_query(const std::vector<uint8_t> &query, std::ofstream &outputFile);
 

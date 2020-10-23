@@ -29,14 +29,14 @@ $(BDIR)/$(EXEC1): $(OBJ)
 
 run:
 	./$(BDIR)/$(EXEC1) \
-	-d /home/michalis/Downloads/project/train \
-	-o /home/michalis/Downloads/project/logs.txt \
+	-d ./assets/train \
+	-o ./logs/logs.txt \
 	-N 10
 
 valgrind:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC1) \
-	-d /home/michalis/Downloads/project/train \
-	-o /home/michalis/Downloads/project/logs.txt \
+	-d ./assets/train \
+	-o ./logs/logs.txt \
 	-N 10
 
 clean:
