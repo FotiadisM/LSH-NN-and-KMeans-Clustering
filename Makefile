@@ -34,13 +34,13 @@ $(BDIR)/$(EXEC3): $(OBJ)
 
 run-lsh:
 	./$(BDIR)/$(EXEC1) \
-	-d ./assets/t10k \
+	-i ./assets/t10k \
 	-o ./logs/logs.txt \
 	-N 10
 
 valgrind-lsh:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC1) \
-	-d ./assets/t10k \
+	-i ./assets/t10k \
 	-o ./logs/logs.txt \
 	-N 10
 

@@ -9,24 +9,28 @@
 
 using namespace std;
 
+// classic
 kmeansplusplus::kmeansplusplus(const int &mClusters, Data &mData)
     : nClusters(mClusters), data(mData)
 {
     this->method = _Classic;
 }
 
+// lsh
 kmeansplusplus::kmeansplusplus(const int &clusters, const int &lsh_k, const int &L, Data &data)
     : nClusters(clusters), lsh_k(lsh_k), L(L), data(data)
 {
     this->method = _LSH;
 }
 
+// hypercube
 kmeansplusplus::kmeansplusplus(const int &clusters, const int &cube_k, const int &M, const int &probes, Data &data)
     : nClusters(clusters), cube_k(cube_k), M(M), probes(probes), data(data)
 {
     this->method = _Hypercube;
 }
 
+// complete
 kmeansplusplus::kmeansplusplus(const int &clusters, const int &lsh_k, const int &L, const int &cube_k, const int &M, const int &probes, Data &data)
     : nClusters(clusters), lsh_k(lsh_k), L(L), cube_k(cube_k), M(M), probes(probes), data(data)
 {
@@ -43,7 +47,23 @@ int kmeansplusplus::Run()
 
     while (totalChange > this->minChange)
     {
-        vector<vector<int>> clusters = this->LloydsClastering();
+        vector<vector<int>> clusters;
+
+        switch (this->method)
+        {
+        case _Classic:
+            clusters = this->LloydsClastering();
+            break;
+        case _LSH:
+            clusters = this->LloydsClastering();
+            break;
+        case _Hypercube:
+            clusters = this->LloydsClastering();
+            break;
+        case _Complete:
+            clusters = this->LloydsClastering();
+            break;
+        }
 
         totalChange = 0;
 
@@ -68,7 +88,8 @@ int kmeansplusplus::Run()
 
             totalChange += clusterChange;
         }
-        // cout << "total " << totalChange << endl;
+
+        cout << "total " << totalChange << endl;
     }
 
     return 0;
