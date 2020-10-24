@@ -10,25 +10,25 @@
 using namespace std;
 
 kmeansplusplus::kmeansplusplus(const int &mClusters, Data &mData)
-    : clusters(mClusters), data(mData)
+    : nClusters(mClusters), data(mData)
 {
     this->method = _Classic;
 }
 
 kmeansplusplus::kmeansplusplus(const int &clusters, const int &lsh_k, const int &L, Data &data)
-    : clusters(clusters), data(data), lsh_k(lsh_k), L(L)
+    : nClusters(clusters), lsh_k(lsh_k), L(L), data(data)
 {
     this->method = _LSH;
 }
 
 kmeansplusplus::kmeansplusplus(const int &clusters, const int &cube_k, const int &M, const int &probes, Data &data)
-    : clusters(clusters), data(data), cube_k(cube_k), M(M), probes(probes)
+    : nClusters(clusters), cube_k(cube_k), M(M), probes(probes), data(data)
 {
     this->method = _Hypercube;
 }
 
 kmeansplusplus::kmeansplusplus(const int &clusters, const int &lsh_k, const int &L, const int &cube_k, const int &M, const int &probes, Data &data)
-    : clusters(clusters), data(data), lsh_k(lsh_k), L(L), cube_k(cube_k), M(M), probes(probes)
+    : nClusters(clusters), lsh_k(lsh_k), L(L), cube_k(cube_k), M(M), probes(probes), data(data)
 {
     this->method = _Complete;
 }
@@ -39,14 +39,36 @@ int kmeansplusplus::Run()
 {
     this->initCentroids();
 
-    for (int j = 0; j < 10; j++) // while change != minimum or 0, change it later
-    {
-        vector<vector<int>> clustering(this->clusters); // holds all data points for every centroid
+    int totalChange = this->minChange + 1;
 
-        for (int j = 0; j < this->data.n; j++)
+    while (totalChange > this->minChange)
+    {
+        vector<vector<int>> clusters = this->LloydsClastering();
+
+        totalChange = 0;
+
+        for (int i = 0; i < this->nClusters; i++)
         {
-            clustering[this->minCentroid(this->data.data[j])].push_back(j);
+            int clusterChange = 0;
+
+            for (int j = 0; j < this->data.d; j++)
+            {
+                int mean = 0;
+
+                for (int &index : clusters[i])
+                {
+                    mean += int(this->data.data[index][j]);
+                }
+
+                mean /= clusters[i].size();
+                clusterChange += abs(int(this->centroids[i][j]) - mean);
+
+                this->centroids[i][j] = uint8_t(mean);
+            }
+
+            totalChange += clusterChange;
         }
+        // cout << "total " << totalChange << endl;
     }
 
     return 0;
@@ -59,7 +81,7 @@ void kmeansplusplus::initCentroids()
     // picking first centroid at random
     this->centroids.push_back(this->data.data[rand() % this->data.n]);
 
-    for (int i = 1; i < this->clusters; i++)
+    for (int i = 1; i < this->nClusters; i++)
     {
         double maxDi = 0;
         vector<double> P(this->data.n + 1); // plus one for P[0] = 0
@@ -105,7 +127,6 @@ int kmeansplusplus::findNextCentroid(const vector<double> &P, const double x)
     {
         if (x <= P[i])
         {
-            cout << i - 1 << endl;
             return i;
         }
     }
@@ -113,11 +134,23 @@ int kmeansplusplus::findNextCentroid(const vector<double> &P, const double x)
     return -1;
 }
 
+vector<vector<int>> kmeansplusplus::LloydsClastering()
+{
+    vector<vector<int>> clusters(this->nClusters); // holds all data points for every centroid
+
+    for (int i = 0; i < this->data.n; i++)
+    {
+        clusters[this->minCentroid(this->data.data[i])].push_back(i);
+    }
+
+    return clusters;
+}
+
 int kmeansplusplus::minCentroid(const vector<uint8_t> &point)
 {
-    int index, minDistance = INT32_MAX;
+    int index = -1, minDistance = INT32_MAX;
 
-    for (int i = 0; i < this->clusters; i++)
+    for (int i = 0; i < this->nClusters; i++)
     {
         int d = this->data.ManhattanDistance(this->centroids[i], point);
         if (d < minDistance)

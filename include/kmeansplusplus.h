@@ -17,9 +17,10 @@ enum Method
 class kmeansplusplus
 {
 private:
-    int clusters;
+    int nClusters;
     int lsh_k, L;          // for lsh
     int cube_k, M, probes; // for hypercube
+    int minChange = 0;
     Method method;
     std::vector<std::vector<uint8_t>> centroids;
     Data &data;
@@ -29,6 +30,8 @@ private:
     uint32_t minDistancefromCentroids(const std::vector<uint8_t> &point);
     int findNextCentroid(const std::vector<double> &P, const double x); // used only for initalization
     int minCentroid(const std::vector<uint8_t> &point);
+
+    std::vector<std::vector<int>> LloydsClastering();
 
 public:
     kmeansplusplus(const int &clusters, Data &data);
