@@ -14,7 +14,6 @@ using namespace std;
 
 f::f()
 {
-// create a hash table here maybe from stl ?!
     cout << "i do nothing" << endl;
 }
 
@@ -27,6 +26,8 @@ f::~f()
 
 int f::calculate_f(std::string key)
 {
+    // leave to see if h produces random numbers
+    cout << " string " << key  << endl;
     int num;
 
     if (this->setOfZeros.find(key) != this->setOfZeros.end())
@@ -55,7 +56,7 @@ hyperCube::hyperCube(int R, int indexSize, Data &data, int k, int d, uint32_t w)
 {
     this->M = uint32_t(pow(2, 32 / this->k));
 
-    this->ht = new hashTable(indexSize, k, d, w);
+    this->ht = new hashTable(pow(2, k), k, d, w);
     
     // initialize array of f functions
     for (int i=0; i<k; i++) {
@@ -75,52 +76,53 @@ int hyperCube::hyperCubeRun()
 {
     // na pernaw stin hamming to ht kai to R kai na mou epistrefei apla mia lista me tous geitones
     hashData();
-    string str = "001100";
 
-    list<string> l = hammingDist(str);
-    list<string>::iterator it;
-    for (it=l.begin(); it!=l.end(); ++it)
-        cout << *it << endl;
+    // just print the ht for a moment to see if everything is correct !one1!11!
+    for (auto &image : this->ht->getItems(100))
+        {
+            // cout << image << endl;
+            // possible_neighbors.push_back(image);
+        }
 
+    // string str = "001100";
+    // list<string> l = hammingDist(str);
+    // list<string>::iterator it;
+    // for (it=l.begin(); it!=l.end(); ++it)
+    //     cout << *it << endl;
+    // f* function = new f();
+    // function->calculate_f(str);
 
-    f* function = new f();
-    function->calculate_f(str);
-
-    cout << "geia" << endl;
+    // cout << "geia" << endl;
     return 0;
 }
 
 
 void hyperCube::hashData()
 {
-
-// 8a kanw calculate mia h tin opoia 8a petaw stin f kai 8a mou dinei 0 h 1
-// kai istera oles autes tis times 8a tis enwsw se ena megalo string to 
-// opoio 8a mpei sto ht-hc
-
     // s = s + std::to_string(1);
-
+    std::string s;
     for (int j = 0; j < this->data.n; j++)
     {
-
-        // anti gia calculate h 8a balw mia rand pou dinei int 
-        // prepei na baloume thn calculate h kai calculate a 
-        // sto hash table wste na min epanalambanoume kwdika
-
-        int h = rand() % 300;
-
-        // cout << this->fTable[0]->calculate_f(std::to_string(h)) << endl;
-        
-
-        // calculate_f and glue the resaults together to big string
-        // this->hyperCubeInsert
+        s="";
+        for (int i = 0; i < this->k; i++)
+        {
+            //    cout << this->ht->calculate_h(this->data.data[j], this->ht->S[i]) << " " << endl;
+            //    cout << this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(this->data.data[j], this->ht->S[i]))) << endl;
+            s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(this->data.data[j], this->ht->S[i]))));
+        }
+        cout << "------------------------------" << endl;
+        // cout << s << endl;
+        // cout << "------------------------------" << endl;
+        this->hyperCubeInsert(s, this->data.data[j]);
     }
 }
 
 
-void hyperCube::hyperCubeInsert(std::string s)
+void hyperCube::hyperCubeInsert(const std::string &s, std::vector<uint8_t> &point)
 {
     cout << "String is : " << s << endl;
+    uint32_t m =static_cast<uint32_t>(std::stoul(s));
+    this->ht->insertItem(m, point);
 }
 
 

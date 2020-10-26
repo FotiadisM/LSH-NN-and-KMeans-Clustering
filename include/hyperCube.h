@@ -1,6 +1,7 @@
 #include <list>
 #include <unordered_set>
 #include <vector>
+#include <string>
 
 #include "hashTable.h"
 #include "data.h"
@@ -34,6 +35,6 @@ public:
     hyperCube(int R, int indexSize, Data &data, int k, int d, uint32_t w = 52);
     ~hyperCube();
     int hyperCubeRun();
-    void hyperCubeInsert(std::string s);
+    void hyperCubeInsert(const std::string &s, std::vector<uint8_t> &point);
     std::list<std::string> hammingDist(std::string s);
 };

@@ -19,7 +19,7 @@ LSH::LSH(int k, int L, int N, Data &data, uint32_t w, uint32_t m)
         this->tables[i] = new hashTable(this->data.n / 16, this->k, this->data.d, this->w);
     }
 
-    cout << "m: " << this->m << " M: " << this->M << endl;
+    // cout << "m: " << this->m << " M: " << this->M << endl;
     // cout << this->md.size() << " " << this->md[1] << endl;
 }
 
