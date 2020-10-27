@@ -178,7 +178,7 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
 
         if ((val = this->getCmdOption(argv, argv + argc, "-m")) != nullptr)
         {
-            if (this->method != nullptr)
+            if (this->method == nullptr)
             {
                 this->method = strdup(val);
             }

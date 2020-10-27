@@ -49,16 +49,14 @@ run-cluster:
 	-i ./assets/t10k \
 	-c ./cluster.conf \
 	-o ./logs/logs.txt \
-	-complete \
-	-m LSH
+	-m Classic
 
 valgrind-cluster:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC3) \
 	-i ./assets/t10k \
 	-c ./cluster.conf \
 	-o ./logs/logs.txt \
-	-complete \
-	-m LSH
+	-m Classic
 
 clean:
 	rm -f $(ODIR)/*.o

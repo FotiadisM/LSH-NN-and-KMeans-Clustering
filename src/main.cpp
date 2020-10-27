@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstdlib>
-#include <vector>
+#include <cstring>
 #include <ctime>
 
 #include "../include/input.h"
@@ -28,7 +28,30 @@ int main(int argc, char *argv[])
 
     if (input.mode == _cluster)
     {
-        kmeansplusplus *kmeans = new kmeansplusplus(input.nClusters, data);
+        kmeansplusplus *kmeans;
+
+        if (!strcmp(input.method, "Classic"))
+        {
+            kmeans = new kmeansplusplus(input.nClusters, data);
+        }
+        else if (!strcmp(input.method, "LSH"))
+        {
+            kmeans = new kmeansplusplus(input.nClusters, input.lsh_k, input.L, data);
+        }
+        else if (!strcmp(input.method, "Hypercube"))
+        {
+            kmeans = new kmeansplusplus(input.nClusters, input.cube_k, input.M, input.probes, data);
+        }
+        else if (!strcmp(input.method, "Complete"))
+        {
+            kmeans = new kmeansplusplus(input.nClusters, input.lsh_k, input.L, input.cube_k, input.M, input.probes, data);
+        }
+        else
+        {
+            cout << "Method: " << input.method << "not recognized" << endl;
+
+            return -1;
+        }
 
         kmeans->Run();
 
@@ -56,7 +79,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            cout << "ola edw plhrwnontai" << endl;
+            cout << "ola edw plhrwnontai" << endl; // hypercube , an to teleiwseis pote
         }
     }
 

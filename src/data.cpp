@@ -109,6 +109,18 @@ int Data::ManhattanDistance(const std::vector<uint8_t> &p1, const std::vector<ui
     return d;
 }
 
+vector<vector<uint8_t>> Data::RangeSearch(vector<uint8_t> query, float R)
+{
+    vector<vector<uint8_t>> result;
+
+    for (auto &point : this->data)
+    {
+        if (this->ManhattanDistance(point, query) < R)
+        {
+        }
+    }
+}
+
 vector<pair<int, vector<uint8_t>>> Data::GetClosestNeighbors(const vector<uint8_t> &point, const vector<vector<uint8_t>> &data, const int &N)
 {
     vector<pair<int, vector<uint8_t>>> result;
