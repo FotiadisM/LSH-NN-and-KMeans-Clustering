@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
     int indexSize = 5;
     hyperCube* hc = new hyperCube(input.R, indexSize, data, input.k, data.d);
-    if (hc->hyperCubeRun() == -1)
+    if (hc->hyperCubeRun(data.data[0], input.outputFile) == -1)
     {
         cerr << "hyperCubeRun() failed" << endl;
     }

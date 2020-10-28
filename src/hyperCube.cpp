@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <bits/stdc++.h> 
 
 #include "../include/hyperCube.h"
 
@@ -72,17 +73,17 @@ hyperCube::~hyperCube()
 }
 
 
-int hyperCube::hyperCubeRun()
+int hyperCube::hyperCubeRun(const vector<uint8_t> &query, ofstream &outputFile)
 {
-    // na pernaw stin hamming to ht kai to R kai na mou epistrefei apla mia lista me tous geitones
     hashData();
 
-    // just print the ht for a moment to see if everything is correct !one1!11!
-    for (auto &image : this->ht->getItems(100))
-        {
-            // cout << image << endl;
-            // possible_neighbors.push_back(image);
-        }
+    if (exec_query(query, outputFile) == -1)
+    {
+        cerr << "Run::exec_query() failed" << endl;
+        return 0;
+    }
+
+    return 0;
 
     // string str = "001100";
     // list<string> l = hammingDist(str);
@@ -91,9 +92,6 @@ int hyperCube::hyperCubeRun()
     //     cout << *it << endl;
     // f* function = new f();
     // function->calculate_f(str);
-
-    // cout << "geia" << endl;
-    return 0;
 }
 
 
@@ -101,18 +99,13 @@ void hyperCube::hashData()
 {
     // s = s + std::to_string(1);
     std::string s;
-    for (int j = 0; j < this->data.n; j++)
-    {
+    for (int j = 0; j < this->data.n; j++) {
         s="";
         for (int i = 0; i < this->k; i++)
-        {
-            //    cout << this->ht->calculate_h(this->data.data[j], this->ht->S[i]) << " " << endl;
-            //    cout << this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(this->data.data[j], this->ht->S[i]))) << endl;
             s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(this->data.data[j], this->ht->S[i]))));
-        }
+
         cout << "------------------------------" << endl;
-        // cout << s << endl;
-        // cout << "------------------------------" << endl;
+
         this->hyperCubeInsert(s, this->data.data[j]);
     }
 }
@@ -121,15 +114,59 @@ void hyperCube::hashData()
 void hyperCube::hyperCubeInsert(const std::string &s, std::vector<uint8_t> &point)
 {
     cout << "String is : " << s << endl;
-    uint32_t m =static_cast<uint32_t>(std::stoul(s));
+
+    // uint32_t m =static_cast<uint32_t>(std::stoul(s));
+    // cout << m << endl;
+    std::bitset<8> bits(s);
+    uint32_t m = bits.to_ulong();
+    std::cout << m << std::endl;
     this->ht->insertItem(m, point);
+}
+
+
+int hyperCube::exec_query(const std::vector<uint8_t> &query, std::ofstream &outputFile)
+{
+
+    int M = 100; // the limit of the search
+    int counter = 0;
+
+    std::string s = "";
+
+    for (int i = 0; i < this->k; i++)
+        s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(query, this->ht->S[i]))));
+
+    std::bitset<8> bits(s);
+    uint32_t m = bits.to_ulong();
+    std::cout << "lol n LOLOLOLLOLOLO " << m << std::endl;
+
+    // this gives me the list of items in the bucket of the query
+    vector<vector<uint8_t>> possible_neighbors;
+    vector<pair<int, vector<uint8_t>>> actual_neigbors;
+
+    for (auto &image : this->ht->getItems(m))
+    {
+        possible_neighbors.push_back(image);
+    }
+
+    actual_neigbors = this->data.GetClosestNeighbors(query, possible_neighbors, 50);
+
+    for (auto &neighbor : actual_neigbors)
+    {
+        outputFile << "Distance: " << neighbor.first << endl;
+    }
+
+
+    // search the list of buckets and the list of the other buckets etc
+
+    // for (int i=0; i<M; i++) {
+        
+    // }
+    return 1;
 }
 
 
 list<string> hyperCube::hammingDist(std::string s)
 {
-    // check here whether they exist in ht or in to calling function ?
-    // take the string and make a list of all the edges in hamming distance from the given one
     list<string> l;
 
     cout << "initial hamming string : " << s << endl;
