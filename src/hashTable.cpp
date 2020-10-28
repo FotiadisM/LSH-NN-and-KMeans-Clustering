@@ -26,18 +26,18 @@ void hashTable::calculate_s(vector<vector<int>> &S, int k, int d, int w)
     }
 }
 
-void hashTable::insertItem(uint32_t &g, vector<uint8_t> &point)
+void hashTable::insertItem(uint32_t g, int index, vector<uint8_t> &point)
 {
-    this->table[g % this->indexSize].push_back(make_pair(g, ref(point)));
+    this->table[g % this->indexSize].emplace_back(g, index, ref(point));
 }
 
-vector<reference_wrapper<vector<uint8_t>>> hashTable::getItems(const uint32_t &g)
+vector<pair<int, reference_wrapper<vector<uint8_t>>>> hashTable::getItems(const uint32_t &g)
 {
-    vector<reference_wrapper<vector<uint8_t>>> result;
+    vector<pair<int, reference_wrapper<vector<uint8_t>>>> result;
 
     for (auto &bucket : this->table[g % this->indexSize])
     {
-        result.push_back(bucket.second);
+        result.emplace_back(get<1>(bucket), get<2>(bucket));
     }
 
     return result;

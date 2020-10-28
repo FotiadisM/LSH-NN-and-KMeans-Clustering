@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unordered_set>
 
 #include "../include/LSH.h"
 #include "../include/hashTable.h"
@@ -53,7 +54,7 @@ void LSH::hashData()
             uint32_t g = this->calculate_g(this->data.data[j], this->tables[i]->S);
 
             // store image in HashTables[i][g]
-            this->tables[i]->insertItem(g, this->data.data[j]);
+            this->tables[i]->insertItem(g, j, this->data.data[j]);
         }
     }
 }
@@ -100,19 +101,24 @@ int LSH::calculate_a(const uint8_t &xi, const int &si)
 int LSH::exec_query(const vector<uint8_t> &query, ofstream &outputFile)
 {
     vector<vector<uint8_t>> possible_neighbors;
-    vector<pair<int, vector<uint8_t>>> actual_neigbors;
+    vector<pair<int, int>> actual_neigbors;
+    unordered_set<int> pickedPoints;
 
     for (auto &table : this->tables)
     {
         uint32_t g = this->calculate_g(query, table->S);
 
-        for (auto &image : table->getItems(g))
+        for (auto &point : table->getItems(g))
         {
-            possible_neighbors.push_back(image);
+            if (pickedPoints.find(point.first) == pickedPoints.end())
+            {
+                pickedPoints.insert(point.first);
+                possible_neighbors.push_back(point.second);
+            }
         }
     }
 
-    actual_neigbors = this->data.GetClosestNeighbors(query, possible_neighbors, 50);
+    actual_neigbors = this->data.GetClosestNeighbors2(query, possible_neighbors, 50);
 
     for (auto &neighbor : actual_neigbors)
     {
