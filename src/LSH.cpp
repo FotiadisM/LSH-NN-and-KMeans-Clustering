@@ -6,8 +6,8 @@
 
 using namespace std;
 
-LSH::LSH(int k, int L, int N, Data &data, uint32_t w, uint32_t m)
-    : k(k), L(L), N(N), data(data), w(w), m(m)
+LSH::LSH(int k, int L, Data &data, uint32_t w, uint32_t m)
+    : k(k), L(L), data(data), w(w), m(m)
 {
     this->M = uint32_t(pow(2, 32 / this->k));
 
@@ -22,6 +22,8 @@ LSH::LSH(int k, int L, int N, Data &data, uint32_t w, uint32_t m)
 
     cout << "m: " << this->m << " M: " << this->M << endl;
     cout << this->md.size() << " " << this->md[1] << endl;
+
+    hashData();
 }
 
 LSH::~LSH()
@@ -32,15 +34,9 @@ LSH::~LSH()
     }
 }
 
-int LSH::Run(const vector<uint8_t> &query, ofstream &outputFile)
+int LSH::Run(const vector<uint8_t> &query, const int &N)
 {
-    hashData();
-
-    if (exec_query(query, outputFile) == -1)
-    {
-        cerr << "Run::exec_query() failed" << endl;
-        return 0;
-    }
+    this->exec_query(query, N);
 
     return 0;
 }
@@ -98,10 +94,9 @@ int LSH::calculate_a(const uint8_t &xi, const int &si)
     return floor(double((int(xi) - si)) / double(this->w));
 }
 
-int LSH::exec_query(const vector<uint8_t> &query, ofstream &outputFile)
+vector<pair<int, int>> LSH::exec_query(const vector<uint8_t> &query, const int &N)
 {
     vector<vector<uint8_t>> possible_neighbors;
-    vector<pair<int, int>> actual_neigbors;
     unordered_set<int> pickedPoints;
 
     for (auto &table : this->tables)
@@ -118,12 +113,5 @@ int LSH::exec_query(const vector<uint8_t> &query, ofstream &outputFile)
         }
     }
 
-    actual_neigbors = this->data.GetClosestNeighbors2(query, possible_neighbors, 50);
-
-    for (auto &neighbor : actual_neigbors)
-    {
-        outputFile << "Distance: " << neighbor.first << endl;
-    }
-
-    return 0;
+    return this->data.GetClosestNeighbors2(query, possible_neighbors, N);
 }

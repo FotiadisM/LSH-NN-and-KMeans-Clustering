@@ -4,6 +4,7 @@
 #include <random>
 #include <chrono>
 #include <algorithm>
+#include <unordered_set>
 
 #include "../include/kmeansplusplus.h"
 
@@ -21,6 +22,8 @@ kmeansplusplus::kmeansplusplus(const int &clusters, const int &lsh_k, const int 
     : nClusters(clusters), lsh_k(lsh_k), L(L), data(data)
 {
     this->method = _LSH;
+
+    this->lsh = new LSH(lsh_k, L, data);
 }
 
 // hypercube
@@ -55,7 +58,7 @@ int kmeansplusplus::Run()
             clusters = this->LloydsClastering();
             break;
         case _LSH:
-            clusters = this->LloydsClastering();
+            clusters = this->LSHClastering();
             break;
         case _Hypercube:
             clusters = this->LloydsClastering();
@@ -163,6 +166,40 @@ vector<vector<int>> kmeansplusplus::LloydsClastering()
     {
         clusters[this->minCentroid(this->data.data[i])].push_back(i);
     }
+
+    return clusters;
+}
+
+vector<vector<int>> kmeansplusplus::LSHClastering()
+{
+    vector<vector<int>> clusters(this->nClusters);
+    unordered_set<int> pickedPoints;
+
+    for (int i = 0; i < this->nClusters; i++)
+    {
+
+        for (auto &point : this->lsh->exec_query(this->centroids[i], this->data.n / 16))
+        {
+
+            if (pickedPoints.find(point.second) == pickedPoints.end())
+            {
+                cout << i;
+                pickedPoints.insert(point.second);
+                clusters[i].push_back(point.second);
+            }
+        }
+        cout << endl;
+    }
+
+    // if (int(pickedPoints.size()) < this->data.n)
+    // {
+    //     cout << "more points" << endl;
+    // }
+
+    // for (int i = 0; i < this->nClusters; i++)
+    // {
+    //     cout << clusters[i].size() << endl;
+    // }
 
     return clusters;
 }

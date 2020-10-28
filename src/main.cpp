@@ -68,9 +68,9 @@ int main(int argc, char *argv[])
 
         if (input.mode == _lsh)
         {
-            LSH *lsh = new LSH(input.lsh_k, input.L, input.N, data);
+            LSH *lsh = new LSH(input.lsh_k, input.L, data);
 
-            if (lsh->Run(data.data[0], input.outputFile) == -1)
+            if (lsh->Run(data.data[0], input.N) == -1)
             {
                 cerr << "LSH::Run() failed" << endl;
             }

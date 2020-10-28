@@ -2,7 +2,6 @@
 #include <queue>
 #include <cmath>
 #include <functional>
-#include <unordered_set>
 
 #include "../include/data.h"
 

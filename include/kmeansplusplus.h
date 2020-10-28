@@ -32,6 +32,7 @@ private:
     int minCentroid(const std::vector<uint8_t> &point);
 
     std::vector<std::vector<int>> LloydsClastering();
+    std::vector<std::vector<int>> LSHClastering();
 
 public:
     kmeansplusplus(const int &clusters, Data &data);
