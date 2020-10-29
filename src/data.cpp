@@ -124,7 +124,7 @@ vector<vector<uint8_t>> Data::RangeSearch(vector<uint8_t> query, const vector<ve
     return result;
 }
 
-vector<pair<int, int>> Data::GetClosestNeighbors2(const vector<uint8_t> &query, const vector<vector<uint8_t>> &data, const int &N)
+vector<pair<int, int>> Data::GetClosestNeighbors(const vector<uint8_t> &query, const vector<vector<uint8_t>> &data, const int &N)
 {
     vector<pair<int, int>> result;
     vector<pair<int, int>> costs;
@@ -138,37 +138,6 @@ vector<pair<int, int>> Data::GetClosestNeighbors2(const vector<uint8_t> &query, 
         return left.first > right.first;
     };
     priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)> q(cmp);
-
-    for (auto &element : costs)
-    {
-        q.push(element);
-    }
-
-    int min = (size_t(N) < q.size()) ? N : q.size();
-
-    for (int i = 0; i < min; i++)
-    {
-        result.push_back(q.top());
-        q.pop();
-    }
-
-    return result;
-}
-
-vector<pair<int, vector<uint8_t>>> Data::GetClosestNeighbors(const vector<uint8_t> &point, const vector<vector<uint8_t>> &data, const int &N)
-{
-    vector<pair<int, vector<uint8_t>>> result;
-    vector<pair<int, vector<uint8_t>>> costs;
-
-    for (auto &element : data)
-    {
-        costs.emplace_back(this->ManhattanDistance(point, element), element);
-    }
-
-    auto cmp = [](pair<int, vector<uint8_t>> left, pair<int, vector<uint8_t>> right) {
-        return left.first > right.first;
-    };
-    priority_queue<pair<int, vector<uint8_t>>, vector<pair<int, vector<uint8_t>>>, decltype(cmp)> q(cmp);
 
     for (auto &element : costs)
     {

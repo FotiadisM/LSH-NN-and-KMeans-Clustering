@@ -67,20 +67,25 @@ int main(int argc, char *argv[])
         //     return -1;
         // }
 
-        if (input.mode == _lsh)
-        {
-            LSH *lsh = new LSH(input.lsh_k, input.L, data);
+        // if (input.mode == _lsh)
+        // {
+        //     LSH *lsh = new LSH(input.lsh_k, input.L, data);
 
-            if (lsh->Run(data.data[0], input.outputFile, 50) == -1)
-            {
-                cerr << "LSH::Run() failed" << endl;
-            }
+        //     if (lsh->Run(data.data[0], input.outputFile, 50) == -1)
+        //     {
+        //         cerr << "LSH::Run() failed" << endl;
+        //     }
 
-            delete lsh;
-        }
-        else
-        {
-            cout << "ola edw plhrwnontai" << endl; // hypercube , an to teleiwseis pote
+        //     delete lsh;
+        // }
+        // else
+        // {
+        //     cout << "ola edw plhrwnontai" << endl; // hypercube , an to teleiwseis pote
+        // }
+
+        HyperCube* hc = new HyperCube(input.cube_k, data, floor(log(data.n)), data.d);
+        if (hc->hyperCubeRun(data.data[0], input.outputFile, 50) == -1) {
+            cerr << "HyperCube::hyperCubeRun() failed!" << endl;
         }
     }
 

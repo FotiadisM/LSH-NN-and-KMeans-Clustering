@@ -86,5 +86,5 @@ vector<pair<int, int>> LSH::exec_query(const vector<uint8_t> &query, const int &
         }
     }
 
-    return this->data.GetClosestNeighbors2(query, possible_neighbors, N);
+    return this->data.GetClosestNeighbors(query, possible_neighbors, N);
 }
