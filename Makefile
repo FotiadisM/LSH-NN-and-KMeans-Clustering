@@ -13,10 +13,10 @@ EXEC1 = lsh
 EXEC2 = cube
 EXEC3 = cluster
 
-_DEPS = data.h input.h LSH.h hashTable.h kmeansplusplus.h
+_DEPS = data.h input.h LSH.h hashTable.h kmeansplusplus.h hyperCube.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o input.o data.o LSH.o hashTable.o kmeansplusplus.o
+_OBJ = main.o input.o data.o LSH.o hashTable.o kmeansplusplus.o hyperCube.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)

@@ -7,14 +7,12 @@
 using namespace std;
 
 LSH::LSH(int k, int L, Data &data, uint32_t w, uint32_t m)
-    : k(k), L(L), data(data), w(w), m(m)
+    : k(k), L(L), data(data), w(w), m(m), M(m / k)
 {
-    this->M = uint32_t(pow(2, 32 / this->k));
-
     this->tables.resize(this->L);
     for (int i = 0; i < L; i++)
     {
-        this->tables[i] = new hashTable(this->data.n / 16, this->k, this->data.d, this->w);
+        this->tables[i] = new hashTable(this->data.n / 16, this->k, this->data.d, this->w, this->m, this->M);
     }
 
     cout << "Running with w: " << w << "m : " << this->m << " and M : " << this->M << endl;
@@ -51,7 +49,6 @@ void LSH::hashData()
         {
             uint32_t g = this->calculate_g(this->data.data[j], this->tables[i]->S);
 
-            // store image in HashTables[i][g]
             this->tables[i]->insertItem(g, j, this->data.data[j]);
         }
     }

@@ -4,11 +4,9 @@
 
 using namespace std;
 
-hashTable::hashTable(int indexSize, int k, int d, uint32_t w, uint32_t m)
-    : indexSize(indexSize), k(k), d(d)
+hashTable::hashTable(int indexSize, int k, int d, uint32_t w, uint32_t m, uint32_t M)
+    : d(d), w(w), m(m), M(M)
 {
-    this->M = uint32_t(pow(2, 32 / this->k));
-
     this->md.resize(this->d, 0);
     this->md[1] = this->m % this->M;
 
@@ -59,14 +57,14 @@ void hashTable::calculate_s(vector<vector<int>> &S, int k, int d, int w)
 
 void hashTable::insertItem(uint32_t g, int index, vector<uint8_t> &point)
 {
-    this->table[g % this->indexSize].emplace_back(g, index, ref(point));
+    this->table[g % this->table.size()].emplace_back(g, index, ref(point));
 }
 
 vector<pair<int, reference_wrapper<vector<uint8_t>>>> hashTable::getItems(const uint32_t &g)
 {
     vector<pair<int, reference_wrapper<vector<uint8_t>>>> result;
 
-    for (auto &bucket : this->table[g % this->indexSize])
+    for (auto &bucket : this->table[g % this->table.size()])
     {
         result.emplace_back(get<1>(bucket), get<2>(bucket));
     }

@@ -3,8 +3,8 @@
 #include <iostream>
 #include <vector>
 
-#include "./data.h"
 #include "./LSH.h"
+#include "./hyperCube.h"
 
 enum Method
 {
@@ -25,6 +25,7 @@ private:
     std::vector<std::vector<uint8_t>> centroids;
     Data &data;
     LSH *lsh;
+    HyperCube *cube;
 
     void initCentroids();
     uint32_t minDistancefromCentroids(const std::vector<uint8_t> &point);

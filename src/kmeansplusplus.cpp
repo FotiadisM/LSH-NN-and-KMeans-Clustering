@@ -179,7 +179,6 @@ vector<vector<int>> kmeansplusplus::LSHClastering()
 
     for (int i = 0; i < this->nClusters; i++)
     {
-
         for (auto &point : this->lsh->exec_query(this->centroids[i], this->data.n / 16))
         {
 
