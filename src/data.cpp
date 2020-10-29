@@ -109,17 +109,19 @@ int Data::ManhattanDistance(const std::vector<uint8_t> &p1, const std::vector<ui
     return d;
 }
 
-vector<vector<uint8_t>> Data::RangeSearch(vector<uint8_t> query, float R)
+vector<vector<uint8_t>> Data::RangeSearch(vector<uint8_t> query, const vector<vector<uint8_t>> &data, float R)
 {
     vector<vector<uint8_t>> result;
 
-    for (auto &point : this->data)
+    for (auto &point : data)
     {
         if (this->ManhattanDistance(point, query) < R)
         {
-            cout << "wtf" << endl;
+            result.push_back(point);
         }
     }
+
+    return result;
 }
 
 vector<pair<int, int>> Data::GetClosestNeighbors2(const vector<uint8_t> &query, const vector<vector<uint8_t>> &data, const int &N)
