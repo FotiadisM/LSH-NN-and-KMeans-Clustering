@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-#include <bits/stdc++.h> 
+#include <bits/stdc++.h>
 
 #include "../include/hyperCube.h"
 
@@ -15,7 +15,7 @@ using namespace std;
 
 f::f()
 {
-    cout << "i do nothing" << endl;
+    // cout << "i do nothing" << endl;
 }
 
 
@@ -84,14 +84,6 @@ int hyperCube::hyperCubeRun(const vector<uint8_t> &query, ofstream &outputFile)
     }
 
     return 0;
-
-    // string str = "001100";
-    // list<string> l = hammingDist(str);
-    // list<string>::iterator it;
-    // for (it=l.begin(); it!=l.end(); ++it)
-    //     cout << *it << endl;
-    // f* function = new f();
-    // function->calculate_f(str);
 }
 
 
@@ -117,6 +109,9 @@ void hyperCube::hyperCubeInsert(const std::string &s, std::vector<uint8_t> &poin
 
     // uint32_t m =static_cast<uint32_t>(std::stoul(s));
     // cout << m << endl;
+
+    // nopt 8 is bad need to pput something else in therre fuck
+    // need to make a function for that because cannot leave it hard coded
     std::bitset<8> bits(s);
     uint32_t m = bits.to_ulong();
     std::cout << m << std::endl;
@@ -124,10 +119,9 @@ void hyperCube::hyperCubeInsert(const std::string &s, std::vector<uint8_t> &poin
 }
 
 
-int hyperCube::exec_query(const std::vector<uint8_t> &query, std::ofstream &outputFile)
+int hyperCube::exec_query(const std::vector<uint8_t> &query, std::ofstream &outputFile, int M, int probes)
 {
 
-    int M = 100; // the limit of the search
     int counter = 0;
 
     std::string s = "";
@@ -135,55 +129,95 @@ int hyperCube::exec_query(const std::vector<uint8_t> &query, std::ofstream &outp
     for (int i = 0; i < this->k; i++)
         s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(query, this->ht->S[i]))));
 
+
+    // use the new function here as well i suppose
     std::bitset<8> bits(s);
     uint32_t m = bits.to_ulong();
-    std::cout << "lol n LOLOLOLLOLOLO " << m << std::endl;
 
     // this gives me the list of items in the bucket of the query
     vector<vector<uint8_t>> possible_neighbors;
     vector<pair<int, vector<uint8_t>>> actual_neigbors;
 
-    for (auto &image : this->ht->getItems(m))
-    {
-        possible_neighbors.push_back(image);
+
+    list<string> bucketList = HammingDist(s, probes);
+    bucketList.push_front(s);
+    // list<string>::iterator it;
+    // for (it=bucketList.begin(); it!=bucketList.end(); ++it) {
+    //     cout << *it << endl;
+    // }
+
+    list<string>::iterator it = bucketList.begin();
+    while (counter < M && it!=bucketList.end()) {
+        std::bitset<8> bits(*it);
+        uint32_t m = bits.to_ulong();
+        for (auto &image : this->ht->getItems(m))
+        {
+            possible_neighbors.push_back(image);
+            counter++;
+            if (counter >= M)
+                break;
+        }
+        ++it;
     }
 
+     
     actual_neigbors = this->data.GetClosestNeighbors(query, possible_neighbors, 50);
 
     for (auto &neighbor : actual_neigbors)
     {
         outputFile << "Distance: " << neighbor.first << endl;
     }
-
-
-    // search the list of buckets and the list of the other buckets etc
-
-    // for (int i=0; i<M; i++) {
-        
-    // }
     return 1;
 }
 
-
-list<string> hyperCube::hammingDist(std::string s)
+std::string hyperCube::toBinary(int n, int size)
 {
-    list<string> l;
-
-    cout << "initial hamming string : " << s << endl;
-
-    for (int i=0; i < (int)s.size(); i++) {
-        if (s[i] == '0')
-            s[i] = '1';
-        else 
-            s[i] = '0';
-        
-        l.push_back(s);
-
-        if (s[i] == '0')
-            s[i] = '1';
-        else 
-            s[i] = '0';
+    std::string r;
+    while(n!=0) {
+        r=(n%2==0 ?"0":"1")+r;
+        n/=2;
     }
 
+    while (r.size() < size)
+        r = "0" + r;
+    return r;
+}
+
+int hyperCube::hamming(std::string str1, std::string str2)
+{
+    int i = 0, count = 0;
+
+    while (str1[i] != '\0') {
+        if (str1[i] != str2[i])
+            count++;
+        i++;
+    }
+
+    return count;
+}
+
+list<string> hyperCube::HammingDist(const std::string s, int probes)
+{
+    list<string> l;
+    std::string curr;
+    int level = 1;
+    int counter = 0;
+    int dist;
+
+    while (1) {
+        for (int i=0; i<pow(2,s.size()); i++) {
+            // cout << toBinary(i, s.size()) << endl;
+            curr = toBinary(i, s.size());
+            dist = hamming(s, curr);
+            if (dist == level) {
+                l.push_back(curr);
+                counter++;
+            }
+            
+            if(counter >= probes)
+                return l;
+        }
+        level++;
+    }
     return l;
 }

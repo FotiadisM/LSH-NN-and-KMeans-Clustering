@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <vector>
 #include <ctime>
+#include <math.h>
 
 #include "../include/input.h"
 #include "../include/LSH.h"
@@ -41,10 +42,10 @@ int main(int argc, char *argv[])
     //     cerr << "LSH::Run() failed" << endl;
     // }
 
-    // // delete lsh;
+    // delete lsh;
 
     int indexSize = 5;
-    hyperCube* hc = new hyperCube(input.R, indexSize, data, input.k, data.d);
+    hyperCube* hc = new hyperCube(input.R, indexSize, data, floor(log(data.n)), data.d);
     if (hc->hyperCubeRun(data.data[0], input.outputFile) == -1)
     {
         cerr << "hyperCubeRun() failed" << endl;
