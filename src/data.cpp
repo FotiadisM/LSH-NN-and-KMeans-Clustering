@@ -1,7 +1,7 @@
 #include <iostream>
-#include <functional>
 #include <queue>
 #include <cmath>
+#include <functional>
 
 #include "../include/data.h"
 
@@ -107,6 +107,52 @@ int Data::ManhattanDistance(const std::vector<uint8_t> &p1, const std::vector<ui
     }
 
     return d;
+}
+
+vector<vector<uint8_t>> Data::RangeSearch(vector<uint8_t> query, const vector<vector<uint8_t>> &data, float R)
+{
+    vector<vector<uint8_t>> result;
+
+    for (auto &point : data)
+    {
+        if (this->ManhattanDistance(point, query) < R)
+        {
+            result.push_back(point);
+        }
+    }
+
+    return result;
+}
+
+vector<pair<int, int>> Data::GetClosestNeighbors2(const vector<uint8_t> &query, const vector<vector<uint8_t>> &data, const int &N)
+{
+    vector<pair<int, int>> result;
+    vector<pair<int, int>> costs;
+
+    for (int i = 0; i < int(data.size()); i++)
+    {
+        costs.emplace_back(this->ManhattanDistance(data[i], query), i);
+    }
+
+    auto cmp = [](pair<int, int> left, pair<int, int> right) {
+        return left.first > right.first;
+    };
+    priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)> q(cmp);
+
+    for (auto &element : costs)
+    {
+        q.push(element);
+    }
+
+    int min = (size_t(N) < q.size()) ? N : q.size();
+
+    for (int i = 0; i < min; i++)
+    {
+        result.push_back(q.top());
+        q.pop();
+    }
+
+    return result;
 }
 
 vector<pair<int, vector<uint8_t>>> Data::GetClosestNeighbors(const vector<uint8_t> &point, const vector<vector<uint8_t>> &data, const int &N)
