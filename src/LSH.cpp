@@ -1,12 +1,13 @@
 #include <iostream>
+#include <unordered_set>
 
 #include "../include/LSH.h"
 #include "../include/hashTable.h"
 
 using namespace std;
 
-LSH::LSH(int k, int L, int N, Data &data, uint32_t w, uint32_t m)
-    : k(k), L(L), N(N), data(data), w(w), m(m)
+LSH::LSH(int k, int L, Data &data, uint32_t w, uint32_t m)
+    : k(k), L(L), data(data), w(w), m(m)
 {
     this->M = uint32_t(pow(2, 32 / this->k));
 
@@ -19,8 +20,9 @@ LSH::LSH(int k, int L, int N, Data &data, uint32_t w, uint32_t m)
         this->tables[i] = new hashTable(this->data.n / 16, this->k, this->data.d, this->w);
     }
 
-    cout << "m: " << this->m << " M: " << this->M << endl;
-    cout << this->md.size() << " " << this->md[1] << endl;
+    cout << "Running with w: " << w << "m : " << this->m << " and M : " << this->M << endl;
+
+    hashData();
 }
 
 LSH::~LSH()
@@ -31,15 +33,15 @@ LSH::~LSH()
     }
 }
 
-int LSH::Run(const vector<uint8_t> &query, ofstream &outputFile)
+int LSH::Run(const vector<uint8_t> &query, ofstream &outputFile, const int &N)
 {
-    hashData();
+    vector<pair<int, int>> result = this->exec_query(query, N);
 
-    if (exec_query(query, outputFile) == -1)
+    for (auto &point : result)
     {
-        cerr << "Run::exec_query() failed" << endl;
-        return 0;
+        outputFile << point.first << " " << point.second << endl;
     }
+    outputFile << endl;
 
     return 0;
 }
@@ -53,7 +55,7 @@ void LSH::hashData()
             uint32_t g = this->calculate_g(this->data.data[j], this->tables[i]->S);
 
             // store image in HashTables[i][g]
-            this->tables[i]->insertItem(g, this->data.data[j]);
+            this->tables[i]->insertItem(g, j, this->data.data[j]);
         }
     }
 }
@@ -97,27 +99,24 @@ int LSH::calculate_a(const uint8_t &xi, const int &si)
     return floor(double((int(xi) - si)) / double(this->w));
 }
 
-int LSH::exec_query(const vector<uint8_t> &query, ofstream &outputFile)
+vector<pair<int, int>> LSH::exec_query(const vector<uint8_t> &query, const int &N)
 {
+    unordered_set<int> pickedPoints;
     vector<vector<uint8_t>> possible_neighbors;
-    vector<pair<int, vector<uint8_t>>> actual_neigbors;
 
     for (auto &table : this->tables)
     {
         uint32_t g = this->calculate_g(query, table->S);
 
-        for (auto &image : table->getItems(g))
+        for (auto &point : table->getItems(g))
         {
-            possible_neighbors.push_back(image);
+            if (pickedPoints.find(point.first) == pickedPoints.end()) // exclude duplicate points
+            {
+                pickedPoints.insert(point.first);
+                possible_neighbors.push_back(point.second);
+            }
         }
     }
 
-    actual_neigbors = this->data.GetClosestNeighbors(query, possible_neighbors, 50);
-
-    for (auto &neighbor : actual_neigbors)
-    {
-        outputFile << "Distance: " << neighbor.first << endl;
-    }
-
-    return 0;
+    return this->data.GetClosestNeighbors2(query, possible_neighbors, N);
 }
