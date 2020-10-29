@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
         {
             LSH *lsh = new LSH(input.lsh_k, input.L, data);
 
-            if (lsh->Run(data.data[0], input.N) == -1)
+            if (lsh->Run(data.data[0], input.outputFile, 50) == -1)
             {
                 cerr << "LSH::Run() failed" << endl;
             }

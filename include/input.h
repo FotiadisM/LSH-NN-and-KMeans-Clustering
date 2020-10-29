@@ -18,8 +18,7 @@ public:
     int nClusters;         // for cluster
     int lsh_k, L;          // for lsh
     int cube_k, M, probes; // for hypercube
-    int N;                 // for lsh and hypercube
-    float R;               // for lsh and hypercube
+    int N, R;              // for lsh and hypercube
     char *method = nullptr;
     Mode mode;
     std::ifstream inputFile, queryFile;

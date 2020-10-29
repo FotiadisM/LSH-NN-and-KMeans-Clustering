@@ -22,13 +22,16 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
 	$(CC) $(OFLAGS) $(CFLAGS) -c $< -o $@ $(LDFLAGS)
 
-all: $(BDIR)/$(EXEC1) $(BDIR)/$(EXEC3)
+all: $(BDIR)/$(EXEC1) $(BDIR)/$(EXEC2) $(BDIR)/$(EXEC3)
 
 $(BDIR)/$(EXEC1): $(OBJ)
 	$(CC) $(OFLAGS) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
+$(BDIR)/$(EXEC2): $(OBJ)
+	$(CC) $(OFLAGS) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+
 $(BDIR)/$(EXEC3): $(OBJ)
-	$(CC) $(OFLAGS) $(CFLAGS) $^ -o $@ $(LDFLAGS) -D CLUSTER
+	$(CC) $(OFLAGS) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 .PHONY: clean run* valgrind*
 

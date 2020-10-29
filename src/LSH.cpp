@@ -20,8 +20,7 @@ LSH::LSH(int k, int L, Data &data, uint32_t w, uint32_t m)
         this->tables[i] = new hashTable(this->data.n / 16, this->k, this->data.d, this->w);
     }
 
-    cout << "m: " << this->m << " M: " << this->M << endl;
-    cout << this->md.size() << " " << this->md[1] << endl;
+    cout << "Running with w: " << w << "m : " << this->m << " and M : " << this->M << endl;
 
     hashData();
 }
@@ -34,9 +33,15 @@ LSH::~LSH()
     }
 }
 
-int LSH::Run(const vector<uint8_t> &query, const int &N)
+int LSH::Run(const vector<uint8_t> &query, ofstream &outputFile, const int &N)
 {
-    this->exec_query(query, N);
+    vector<pair<int, int>> result = this->exec_query(query, N);
+
+    for (auto &point : result)
+    {
+        outputFile << point.first << " " << point.second << endl;
+    }
+    outputFile << endl;
 
     return 0;
 }
@@ -96,8 +101,8 @@ int LSH::calculate_a(const uint8_t &xi, const int &si)
 
 vector<pair<int, int>> LSH::exec_query(const vector<uint8_t> &query, const int &N)
 {
-    vector<vector<uint8_t>> possible_neighbors;
     unordered_set<int> pickedPoints;
+    vector<vector<uint8_t>> possible_neighbors;
 
     for (auto &table : this->tables)
     {
@@ -105,7 +110,7 @@ vector<pair<int, int>> LSH::exec_query(const vector<uint8_t> &query, const int &
 
         for (auto &point : table->getItems(g))
         {
-            if (pickedPoints.find(point.first) == pickedPoints.end())
+            if (pickedPoints.find(point.first) == pickedPoints.end()) // exclude duplicate points
             {
                 pickedPoints.insert(point.first);
                 possible_neighbors.push_back(point.second);

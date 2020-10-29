@@ -38,6 +38,8 @@ kmeansplusplus::kmeansplusplus(const int &clusters, const int &lsh_k, const int 
     : nClusters(clusters), lsh_k(lsh_k), L(L), cube_k(cube_k), M(M), probes(probes), data(data)
 {
     this->method = _Complete;
+
+    this->lsh = new LSH(lsh_k, L, data);
 }
 
 kmeansplusplus::~kmeansplusplus() {}
@@ -86,7 +88,7 @@ int kmeansplusplus::Run()
                 mean /= clusters[i].size();
                 clusterChange += abs(int(this->centroids[i][j]) - mean);
 
-                this->centroids[i][j] = uint8_t(mean);
+                this->centroids[i][j] = uint8_t(mean); //casting here propably wrong/unnecessary
             }
 
             totalChange += clusterChange;
@@ -183,22 +185,27 @@ vector<vector<int>> kmeansplusplus::LSHClastering()
 
             if (pickedPoints.find(point.second) == pickedPoints.end())
             {
-                cout << i;
                 pickedPoints.insert(point.second);
                 clusters[i].push_back(point.second);
             }
         }
-        cout << endl;
     }
 
-    // if (int(pickedPoints.size()) < this->data.n)
-    // {
-    //     cout << "more points" << endl;
-    // }
+    if (int(pickedPoints.size()) < this->data.n)
+    {
+        // cout << "picked points: " << pickedPoints.size() << endl;
+        for (int i = 0; i < this->data.n; i++)
+        {
+            if (pickedPoints.find(i) == pickedPoints.end())
+            {
+                clusters[this->minCentroid(this->data.data[i])].push_back(i);
+            }
+        }
+    }
 
-    // for (int i = 0; i < this->nClusters; i++)
+    // for (auto &clust : clusters)
     // {
-    //     cout << clusters[i].size() << endl;
+    //     cout << clust.size() << endl;
     // }
 
     return clusters;

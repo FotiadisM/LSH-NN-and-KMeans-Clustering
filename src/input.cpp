@@ -187,7 +187,7 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
     else
     {
         this->N = 1;
-        this->R = 1.0;
+        this->R = 10000;
 
         if ((val = this->getCmdOption(argv, argv + argc, "-q")) != nullptr)
         {
@@ -215,7 +215,7 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
 
         if ((val = this->getCmdOption(argv, argv + argc, "-R")) != nullptr)
         {
-            sscanf(val, "%f", &(this->R));
+            sscanf(val, "%d", &(this->R));
         }
 
         if (string(argv[0]).find("lsh") != string::npos)
