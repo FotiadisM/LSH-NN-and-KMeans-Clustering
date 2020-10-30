@@ -33,19 +33,15 @@ int main(int argc, char *argv[])
 
         if (!strcmp(input.method, "Classic"))
         {
-            kmeans = new kmeansplusplus(input.nClusters, data);
+            kmeans = new kmeansplusplus(input.nClusters, input.complete, data);
         }
         else if (!strcmp(input.method, "LSH"))
         {
-            kmeans = new kmeansplusplus(input.nClusters, input.lsh_k, input.L, data);
+            kmeans = new kmeansplusplus(input.nClusters, input.complete, input.lsh_k, input.L, data);
         }
         else if (!strcmp(input.method, "Hypercube"))
         {
-            kmeans = new kmeansplusplus(input.nClusters, input.cube_k, input.M, input.probes, data);
-        }
-        else if (!strcmp(input.method, "Complete"))
-        {
-            kmeans = new kmeansplusplus(input.nClusters, input.lsh_k, input.L, input.cube_k, input.M, input.probes, data);
+            kmeans = new kmeansplusplus(input.nClusters, input.complete, input.cube_k, input.M, input.probes, data);
         }
         else
         {
@@ -54,7 +50,7 @@ int main(int argc, char *argv[])
             return -1;
         }
 
-        kmeans->Run();
+        kmeans->Run(input.outputFile);
 
         delete kmeans;
     }

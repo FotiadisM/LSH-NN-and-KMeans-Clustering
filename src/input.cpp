@@ -169,11 +169,7 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
 
         if ((val = this->getCmdOption(argv, argv + argc, "-complete")) != nullptr)
         {
-            if (this->method != nullptr)
-            {
-                free(this->method);
-            }
-            this->method = strdup("Complete");
+            this->complete = true;
         }
 
         if ((val = this->getCmdOption(argv, argv + argc, "-m")) != nullptr)

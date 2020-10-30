@@ -11,15 +11,15 @@
 using namespace std;
 
 // classic
-kmeansplusplus::kmeansplusplus(const int &mClusters, Data &mData)
-    : nClusters(mClusters), data(mData)
+kmeansplusplus::kmeansplusplus(const int &mClusters, const bool &complete, Data &mData)
+    : nClusters(mClusters), complete(complete), data(mData)
 {
     this->method = _Classic;
 }
 
 // lsh
-kmeansplusplus::kmeansplusplus(const int &clusters, const int &lsh_k, const int &L, Data &data)
-    : nClusters(clusters), lsh_k(lsh_k), L(L), data(data)
+kmeansplusplus::kmeansplusplus(const int &clusters, const bool &complete, const int &lsh_k, const int &L, Data &data)
+    : nClusters(clusters), complete(complete), lsh_k(lsh_k), L(L), data(data)
 {
     this->method = _LSH;
 
@@ -27,35 +27,26 @@ kmeansplusplus::kmeansplusplus(const int &clusters, const int &lsh_k, const int 
 }
 
 // hypercube
-kmeansplusplus::kmeansplusplus(const int &clusters, const int &cube_k, const int &M, const int &probes, Data &data)
-    : nClusters(clusters), cube_k(cube_k), M(M), probes(probes), data(data)
+kmeansplusplus::kmeansplusplus(const int &clusters, const bool &complete, const int &cube_k, const int &M, const int &probes, Data &data)
+    : nClusters(clusters), complete(complete), cube_k(cube_k), M(M), probes(probes), data(data)
 {
     this->method = _Hypercube;
 
     this->cube = new HyperCube(cube_k, M, probes, data);
 }
 
-// complete
-kmeansplusplus::kmeansplusplus(const int &clusters, const int &lsh_k, const int &L, const int &cube_k, const int &M, const int &probes, Data &data)
-    : nClusters(clusters), lsh_k(lsh_k), L(L), cube_k(cube_k), M(M), probes(probes), data(data)
-{
-    this->method = _Complete;
-
-    this->lsh = new LSH(lsh_k, L, data);
-}
-
 kmeansplusplus::~kmeansplusplus() {}
 
-int kmeansplusplus::Run()
+int kmeansplusplus::Run(ofstream &outputFile)
 {
-    this->initCentroids();
-
+    vector<vector<int>> clusters;
     int totalChange = this->minChange + 1;
+    auto start = chrono::high_resolution_clock::now();
+
+    this->initCentroids();
 
     while (totalChange > this->minChange)
     {
-        vector<vector<int>> clusters;
-
         switch (this->method)
         {
         case _Classic:
@@ -66,9 +57,6 @@ int kmeansplusplus::Run()
             break;
         case _Hypercube:
             clusters = this->HyperCubeClustering();
-            break;
-        case _Complete:
-            clusters = this->LloydsClustering();
             break;
         }
 
@@ -95,9 +83,13 @@ int kmeansplusplus::Run()
 
             totalChange += clusterChange;
         }
-
-        cout << "total " << totalChange << endl;
+        // cout << "total " << totalChange << endl;
     }
+    auto stop = chrono::high_resolution_clock::now();
+
+    auto duration = chrono::duration_cast<chrono::seconds>(stop - start);
+
+    this->print(clusters, outputFile, duration.count());
 
     return 0;
 }
@@ -123,7 +115,7 @@ void kmeansplusplus::initCentroids()
         }
 
         P[0] = 0;
-        for (int j = 1; j <= this->data.n; j++)
+        for (int j = 1; j < this->data.n; j++)
         {
             double Di = this->minDistancefromCentroids(this->data.data[j]);
 
@@ -251,4 +243,34 @@ int kmeansplusplus::minCentroid(const vector<uint8_t> &point)
     }
 
     return index;
+}
+
+void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &outputFile, int64_t time)
+{
+    switch (this->method)
+    {
+    case _Classic:
+        outputFile << "Algorithm: Llooyds" << endl;
+        break;
+    case _LSH:
+        outputFile << "Algorithm: LSH" << endl;
+        break;
+    case _Hypercube:
+        outputFile << "Algorithm: Hypercube" << endl;
+        break;
+    }
+
+    for (int i = 0; i < this->nClusters; i++)
+    {
+        outputFile << "CLUSTER-" << i << " {size: " << clusters[i].size() << ", centroid: [";
+        for (const auto &i : clusters[i])
+        {
+            outputFile << i << ", ";
+        }
+        outputFile << "\b\b]}" << endl
+                   << endl; // annoying auto format
+    }
+
+    outputFile << "clustering_time: " << time << endl;
+    outputFile << "Silhouette: []" << endl;
 }

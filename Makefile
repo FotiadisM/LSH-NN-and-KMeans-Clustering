@@ -1,4 +1,4 @@
-CC = g++ -std=c++11
+CC = g++
 
 OFLAGS = -std=c++11 -O3
 CFLAGS = -g3 -Wall -Wextra
@@ -62,17 +62,17 @@ valgrind-hc:
 
 run-cluster:
 	./$(BDIR)/$(EXEC3) \
-	-i ./assets/t10k \
+	-i ./assets/train \
 	-c ./cluster.conf \
 	-o ./logs/logs.txt \
-	-m Hypercube
+	-m Classic
 
 valgrind-cluster:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC3) \
 	-i ./assets/t10k \
 	-c ./cluster.conf \
 	-o ./logs/logs.txt \
-	-m LSH
+	-m Classic
 
 clean:
 	rm -f $(ODIR)/*.o

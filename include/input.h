@@ -20,6 +20,7 @@ public:
     int cube_k, M, probes; // for hypercube
     int N, R;              // for lsh and hypercube
     char *method = nullptr;
+    bool complete = false;
     Mode mode;
     std::ifstream inputFile, queryFile;
     std::ofstream outputFile;

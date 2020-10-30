@@ -101,7 +101,7 @@ int Data::ManhattanDistance(const std::vector<uint8_t> &p1, const std::vector<ui
 {
     int d = 0;
 
-    for (size_t i = 0; i < p1.size(); i++)
+    for (int i = 0; i < int(p1.size()); i++)
     {
         d += abs(p2[i] - p1[i]);
     }
