@@ -32,7 +32,7 @@ kmeansplusplus::kmeansplusplus(const int &clusters, const int &cube_k, const int
 {
     this->method = _Hypercube;
 
-    // this->cube = new HyperCube();
+    this->cube = new HyperCube(cube_k, M, probes, data);
 }
 
 // complete
@@ -212,14 +212,14 @@ vector<vector<int>> kmeansplusplus::HyperCubeClustering()
 
     for (int i = 0; i < this->nClusters; i++)
     {
-        // for (auto &point : this->cube->exec_query(this->centroids[i], this->data.n / this->nClusters))
-        // {
-        //     if (pickedPoints.find(point.second) == pickedPoints.end())
-        //     {
-        //         pickedPoints.insert(point.second);
-        //         clusters[i].push_back(point.second);
-        //     }
-        // }
+        for (auto &point : this->cube->exec_query(this->centroids[i], this->data.n / this->nClusters))
+        {
+            if (pickedPoints.find(point.second) == pickedPoints.end())
+            {
+                pickedPoints.insert(point.second);
+                clusters[i].push_back(point.second);
+            }
+        }
     }
 
     if (int(pickedPoints.size()) < this->data.n)

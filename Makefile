@@ -65,7 +65,7 @@ run-cluster:
 	-i ./assets/t10k \
 	-c ./cluster.conf \
 	-o ./logs/logs.txt \
-	-m LSH
+	-m Hypercube
 
 valgrind-cluster:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC3) \

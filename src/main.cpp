@@ -80,9 +80,9 @@ int main(int argc, char *argv[])
         }
         else
         {
-            HyperCube *hc = new HyperCube(input.cube_k, data, floor(log(data.n)), data.d);
+            HyperCube *hc = new HyperCube(input.cube_k, input.M, input.probes, data);
 
-            if (hc->hyperCubeRun(data.data[0], input.outputFile, 50) == -1)
+            if (hc->Run(data.data[0], input.outputFile, 50) == -1)
             {
                 cerr << "HyperCube::hyperCubeRun() failed!" << endl;
             }

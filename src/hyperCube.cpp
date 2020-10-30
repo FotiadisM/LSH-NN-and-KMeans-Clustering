@@ -42,12 +42,10 @@ int f::calculate_f(std::string key)
     return -1;
 }
 
-HyperCube::HyperCube(int R, Data &data, int k, int d, uint32_t w, uint32_t m)
-    : R(R), k(k), d(d), w(w), data(data)
+HyperCube::HyperCube(int k, int M, int probes, Data &data, uint32_t w, uint32_t m)
+    : k(k), M(M), probes(probes), data(data)
 {
-    this->M = uint32_t(pow(2, 32 / this->k));
-
-    this->ht = new hashTable(pow(2, k), k, d, w, m, m / k);
+    this->ht = new hashTable(pow(2, k), k, data.d, w, m, pow(2, 32 / this->k));
 
     // initialize array of f functions
     for (int i = 0; i < k; i++)
@@ -61,9 +59,13 @@ HyperCube::HyperCube(int R, Data &data, int k, int d, uint32_t w, uint32_t m)
 
 HyperCube::~HyperCube()
 {
+    for (int i = 0; i < k; i++)
+    {
+        delete this->fTable[i];
+    }
 }
 
-int HyperCube::hyperCubeRun(const vector<uint8_t> &query, ofstream &outputFile, const int &N)
+int HyperCube::Run(const vector<uint8_t> &query, ofstream &outputFile, const int &N)
 {
 
     vector<pair<int, int>> result = exec_query(query, N);
@@ -78,13 +80,12 @@ int HyperCube::hyperCubeRun(const vector<uint8_t> &query, ofstream &outputFile, 
 
 void HyperCube::hashData()
 {
-    std::string s;
-
     for (int j = 0; j < this->data.n; j++)
     {
-        s = "";
+        std::string s = "";
+
         for (int i = 0; i < this->k; i++)
-            s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(this->data.data[j], this->ht->S[i]))));
+            s += std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(this->data.data[j], this->ht->S[i]))));
 
         this->hyperCubeInsert(s, j, this->data.data[j]);
     }
@@ -97,9 +98,8 @@ void HyperCube::hyperCubeInsert(const std::string &s, int index, std::vector<uin
     this->ht->insertItem(std::stoi(s, nullptr, 2), index, point);
 }
 
-vector<pair<int, int>> HyperCube::exec_query(const std::vector<uint8_t> &query, const int &N, int M, int probes)
+vector<pair<int, int>> HyperCube::exec_query(const std::vector<uint8_t> &query, const int &N)
 {
-    vector<pair<int, vector<uint8_t>>> actual_neigbors;
     vector<pair<int, vector<uint8_t>>> possible_neighbors;
     list<string> bucketList;
     list<string>::iterator it;
