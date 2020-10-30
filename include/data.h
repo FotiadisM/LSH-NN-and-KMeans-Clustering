@@ -21,5 +21,5 @@ public:
     RangeSearch(std::vector<uint8_t> query, const std::vector<std::vector<uint8_t>> &data, float R);
 
     std::vector<std::pair<int, int>>
-    GetClosestNeighbors(const std::vector<uint8_t> &query, const std::vector<std::vector<uint8_t>> &data, const int &N);
+    GetClosestNeighbors(const std::vector<uint8_t> &query, const std::vector<std::pair<int, std::vector<uint8_t>>> &data, const int &N);
 };

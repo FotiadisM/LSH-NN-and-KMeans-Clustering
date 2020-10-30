@@ -48,13 +48,13 @@ valgrind-lsh:
 	-N 10
 
 run-hc:
-	./$(BDIR)/$(EXEC1) \
+	./$(BDIR)/$(EXEC2) \
 	-i ./assets/t10k \
 	-o ./logs/logs.txt \
 	-N 10
 
 valgrind-hc:
-	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC1) \
+	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC2) \
 	-i ./assets/t10k \
 	-o ./logs/logs.txt \
 	-N 10

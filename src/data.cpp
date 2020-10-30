@@ -124,14 +124,14 @@ vector<vector<uint8_t>> Data::RangeSearch(vector<uint8_t> query, const vector<ve
     return result;
 }
 
-vector<pair<int, int>> Data::GetClosestNeighbors(const vector<uint8_t> &query, const vector<vector<uint8_t>> &data, const int &N)
+vector<pair<int, int>> Data::GetClosestNeighbors(const vector<uint8_t> &query, const vector<pair<int, vector<uint8_t>>> &data, const int &N)
 {
     vector<pair<int, int>> result;
     vector<pair<int, int>> costs;
 
-    for (int i = 0; i < int(data.size()); i++)
+    for (const auto &point : data)
     {
-        costs.emplace_back(this->ManhattanDistance(data[i], query), i);
+        costs.emplace_back(this->ManhattanDistance(point.second, query), point.first);
     }
 
     auto cmp = [](pair<int, int> left, pair<int, int> right) {
@@ -144,7 +144,7 @@ vector<pair<int, int>> Data::GetClosestNeighbors(const vector<uint8_t> &query, c
         q.push(element);
     }
 
-    int min = (size_t(N) < q.size()) ? N : q.size();
+    int min = (N < int(q.size())) ? N : q.size();
 
     for (int i = 0; i < min; i++)
     {

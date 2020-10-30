@@ -12,13 +12,9 @@ using namespace std;
  while using less space since they only store the keys and not the values associated with them
 */
 
-f::f()
-{
-}
+f::f() {}
 
-f::~f()
-{
-}
+f::~f() {}
 
 int f::calculate_f(std::string key)
 {
@@ -28,13 +24,16 @@ int f::calculate_f(std::string key)
         return 0;
     else if (this->setOfOnes.find(key) != this->setOfOnes.end())
         return 1;
-    else {
+    else
+    {
         num = rand() % 2;
-        if (num == 0) {
+        if (num == 0)
+        {
             this->setOfZeros.insert(key);
             return 0;
         }
-        else {
+        else
+        {
             this->setOfOnes.insert(key);
             return 1;
         }
@@ -51,7 +50,8 @@ HyperCube::HyperCube(int R, Data &data, int k, int d, uint32_t w, uint32_t m)
     this->ht = new hashTable(pow(2, k), k, d, w, m, m / k);
 
     // initialize array of f functions
-    for (int i = 0; i < k; i++) {
+    for (int i = 0; i < k; i++)
+    {
         f *f_instance = new f();
         this->fTable.push_back(f_instance);
     }
@@ -68,7 +68,8 @@ int HyperCube::hyperCubeRun(const vector<uint8_t> &query, ofstream &outputFile, 
 
     vector<pair<int, int>> result = exec_query(query, N);
 
-    for (auto &neighbor : result) {
+    for (auto &neighbor : result)
+    {
         outputFile << "Distance: " << neighbor.first << endl;
     }
 
@@ -79,7 +80,8 @@ void HyperCube::hashData()
 {
     std::string s;
 
-    for (int j = 0; j < this->data.n; j++) {
+    for (int j = 0; j < this->data.n; j++)
+    {
         s = "";
         for (int i = 0; i < this->k; i++)
             s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(this->data.data[j], this->ht->S[i]))));
@@ -88,7 +90,6 @@ void HyperCube::hashData()
     }
 }
 
-
 void HyperCube::hyperCubeInsert(const std::string &s, int index, std::vector<uint8_t> &point)
 {
     // cout << "String is : " << s << endl;
@@ -96,11 +97,10 @@ void HyperCube::hyperCubeInsert(const std::string &s, int index, std::vector<uin
     this->ht->insertItem(std::stoi(s, nullptr, 2), index, point);
 }
 
-
 vector<pair<int, int>> HyperCube::exec_query(const std::vector<uint8_t> &query, const int &N, int M, int probes)
 {
     vector<pair<int, vector<uint8_t>>> actual_neigbors;
-    vector<vector<uint8_t>> possible_neighbors;
+    vector<pair<int, vector<uint8_t>>> possible_neighbors;
     list<string> bucketList;
     list<string>::iterator it;
     std::string s = "";
@@ -114,10 +114,12 @@ vector<pair<int, int>> HyperCube::exec_query(const std::vector<uint8_t> &query, 
     bucketList.push_front(s);
 
     it = bucketList.begin();
-    while (counter < M && it != bucketList.end()) {
+    while (counter < M && it != bucketList.end())
+    {
         m = std::stoi(*it, nullptr, 2);
-        for (auto &image : this->ht->getItems(m)) {
-            possible_neighbors.push_back(image.second);
+        for (auto &image : this->ht->getItems(m))
+        {
+            possible_neighbors.emplace_back(image.first, image.second);
             counter++;
             if (counter >= M)
                 break;
@@ -132,7 +134,8 @@ std::string HyperCube::toBinary(int n, int size)
 {
     std::string r;
 
-    while (n != 0) {
+    while (n != 0)
+    {
         r = (n % 2 == 0 ? "0" : "1") + r;
         n /= 2;
     }
@@ -147,7 +150,8 @@ int HyperCube::hamming(std::string str1, std::string str2)
 {
     int i = 0, count = 0;
 
-    while (str1[i] != '\0') {
+    while (str1[i] != '\0')
+    {
         if (str1[i] != str2[i])
             count++;
         i++;
@@ -164,11 +168,14 @@ list<string> HyperCube::HammingDist(const std::string s, int probes)
     int counter = 0;
     int dist;
 
-    while (1) {
-        for (int i = 0; i < pow(2, s.size()); i++) {
+    while (1)
+    {
+        for (int i = 0; i < pow(2, s.size()); i++)
+        {
             curr = toBinary(i, s.size());
             dist = hamming(s, curr);
-            if (dist == level) {
+            if (dist == level)
+            {
                 l.push_back(curr);
                 counter++;
             }

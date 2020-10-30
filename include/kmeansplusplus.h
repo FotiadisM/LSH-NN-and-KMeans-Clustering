@@ -32,8 +32,9 @@ private:
     int findNextCentroid(const std::vector<double> &P, const double x); // used only for initalization
     int minCentroid(const std::vector<uint8_t> &point);
 
-    std::vector<std::vector<int>> LloydsClastering();
-    std::vector<std::vector<int>> LSHClastering();
+    std::vector<std::vector<int>> LloydsClustering();
+    std::vector<std::vector<int>> LSHClustering();
+    std::vector<std::vector<int>> HyperCubeClustering();
 
 public:
     kmeansplusplus(const int &clusters, Data &data);

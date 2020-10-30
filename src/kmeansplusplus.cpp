@@ -31,6 +31,8 @@ kmeansplusplus::kmeansplusplus(const int &clusters, const int &cube_k, const int
     : nClusters(clusters), cube_k(cube_k), M(M), probes(probes), data(data)
 {
     this->method = _Hypercube;
+
+    // this->cube = new HyperCube();
 }
 
 // complete
@@ -57,16 +59,16 @@ int kmeansplusplus::Run()
         switch (this->method)
         {
         case _Classic:
-            clusters = this->LloydsClastering();
+            clusters = this->LloydsClustering();
             break;
         case _LSH:
-            clusters = this->LSHClastering();
+            clusters = this->LSHClustering();
             break;
         case _Hypercube:
-            clusters = this->LloydsClastering();
+            clusters = this->HyperCubeClustering();
             break;
         case _Complete:
-            clusters = this->LloydsClastering();
+            clusters = this->LloydsClustering();
             break;
         }
 
@@ -88,7 +90,7 @@ int kmeansplusplus::Run()
                 mean /= clusters[i].size();
                 clusterChange += abs(int(this->centroids[i][j]) - mean);
 
-                this->centroids[i][j] = uint8_t(mean); //casting here propably wrong/unnecessary
+                this->centroids[i][j] = mean;
             }
 
             totalChange += clusterChange;
@@ -160,7 +162,7 @@ int kmeansplusplus::findNextCentroid(const vector<double> &P, const double x)
     return -1;
 }
 
-vector<vector<int>> kmeansplusplus::LloydsClastering()
+vector<vector<int>> kmeansplusplus::LloydsClustering()
 {
     vector<vector<int>> clusters(this->nClusters); // holds all data points for every centroid
 
@@ -172,16 +174,15 @@ vector<vector<int>> kmeansplusplus::LloydsClastering()
     return clusters;
 }
 
-vector<vector<int>> kmeansplusplus::LSHClastering()
+vector<vector<int>> kmeansplusplus::LSHClustering()
 {
     vector<vector<int>> clusters(this->nClusters);
     unordered_set<int> pickedPoints;
 
     for (int i = 0; i < this->nClusters; i++)
     {
-        for (auto &point : this->lsh->exec_query(this->centroids[i], this->data.n / 16))
+        for (auto &point : this->lsh->exec_query(this->centroids[i], this->data.n / this->nClusters))
         {
-
             if (pickedPoints.find(point.second) == pickedPoints.end())
             {
                 pickedPoints.insert(point.second);
@@ -192,7 +193,6 @@ vector<vector<int>> kmeansplusplus::LSHClastering()
 
     if (int(pickedPoints.size()) < this->data.n)
     {
-        // cout << "picked points: " << pickedPoints.size() << endl;
         for (int i = 0; i < this->data.n; i++)
         {
             if (pickedPoints.find(i) == pickedPoints.end())
@@ -202,10 +202,36 @@ vector<vector<int>> kmeansplusplus::LSHClastering()
         }
     }
 
-    // for (auto &clust : clusters)
-    // {
-    //     cout << clust.size() << endl;
-    // }
+    return clusters;
+}
+
+vector<vector<int>> kmeansplusplus::HyperCubeClustering()
+{
+    vector<vector<int>> clusters(this->nClusters);
+    unordered_set<int> pickedPoints;
+
+    for (int i = 0; i < this->nClusters; i++)
+    {
+        // for (auto &point : this->cube->exec_query(this->centroids[i], this->data.n / this->nClusters))
+        // {
+        //     if (pickedPoints.find(point.second) == pickedPoints.end())
+        //     {
+        //         pickedPoints.insert(point.second);
+        //         clusters[i].push_back(point.second);
+        //     }
+        // }
+    }
+
+    if (int(pickedPoints.size()) < this->data.n)
+    {
+        for (int i = 0; i < this->data.n; i++)
+        {
+            if (pickedPoints.find(i) == pickedPoints.end())
+            {
+                clusters[this->minCentroid(this->data.data[i])].push_back(i);
+            }
+        }
+    }
 
     return clusters;
 }
