@@ -67,18 +67,19 @@ HyperCube::~HyperCube()
 
 int HyperCube::Run(const vector<uint8_t> &query, ofstream &outputFile, const int &N)
 {
-
-    vector<pair<int, int>> result = exec_query(query, N);
-
+    vector<pair<int, vector<uint8_t>>> exactNeighboor;
+    vector<pair<int, int>> result;
     std::string s="";
+    int i = 0;
+
+    result = exec_query(query, N);
+
     for (int i = 0; i < this->k; i++)
         s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(query, this->ht->S[i]))));
 
      outputFile << "Query" << get<1>(this->ht->table[std::stoi(s, nullptr, 2)][1]) << endl;
 
-    int i = 0;
-    vector<pair<int, vector<uint8_t>>> exactNeighboor = this->data.RangeSearch2(query, N);
-
+    exactNeighboor = this->data.RangeSearch2(query, N);
     for (auto& approximateNeighboor : result)
     {
         outputFile << "Nearest neighbor " << i << " : " << approximateNeighboor.second << endl;
@@ -90,11 +91,11 @@ int HyperCube::Run(const vector<uint8_t> &query, ofstream &outputFile, const int
         i++;
     }
 
-        outputFile << "R-near neighbors:" << endl;
+    outputFile << "R-near neighbors:" << endl;
 
     for (auto &rs : exactNeighboor)
     {
-        std::string s="";
+        s="";
         for (int i = 0; i < this->k; i++)
             s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(rs.second, this->ht->S[i]))));
 
