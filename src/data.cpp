@@ -165,7 +165,8 @@ vector<pair<int, int>> Data::GetClosestNeighbors(const vector<uint8_t> &query, c
 
     for (int i = 0; i < int(data.size()); i++)
     {
-        q.push(make_pair(this->distanceFunction(data[i].second, query), i));
+        // anti gia data[i].first pernages i cool dude
+        q.push(make_pair(this->distanceFunction(data[i].second, query), data[i].first));
     }
 
     int min = (N < int(q.size())) ? N : q.size();

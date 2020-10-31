@@ -77,7 +77,8 @@ int main(int argc, char *argv[])
         }
         else
         {
-            HyperCube *hc = new HyperCube(input.cube_k, input.M, input.probes, data);
+            // HyperCube *hc = new HyperCube(input.cube_k, input.M, input.probes, data);
+            HyperCube *hc = new HyperCube(floor(log2(data.n)), input.M, input.probes, data);
 
             if (hc->Run(data.queries, input.outputFile, 50) == -1)
             {

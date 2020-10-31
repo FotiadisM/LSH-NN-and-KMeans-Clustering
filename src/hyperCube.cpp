@@ -128,6 +128,7 @@ vector<pair<int, int>> HyperCube::exec_query(const std::vector<uint8_t> &query, 
         m = std::stoi(*it, nullptr, 2);
         for (auto &image : this->ht->getItems(m))
         {
+            cout << image.first << endl;
             possible_neighbors.emplace_back(image.first, image.second);
             counter++;
             if (counter >= M)
@@ -206,7 +207,7 @@ void HyperCube::print(ofstream &outputFile, const int &query, vector<pair<int, i
     {
         outputFile << "Nearest neighbor-" << i << ": " << cubeResult[i].second << endl;
         outputFile << "distanceCube: " << cubeResult[i].first << endl;
-        outputFile << "distanceTrue: " << trueResult[i].first << endl;
+        outputFile << "distanceTrue: " << trueResult[i].first << endl << endl;
     }
 
     outputFile << "tCube: " << tCube << endl;
