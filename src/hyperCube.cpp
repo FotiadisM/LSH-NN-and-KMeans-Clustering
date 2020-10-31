@@ -70,14 +70,11 @@ int HyperCube::Run(const vector<uint8_t> &query, ofstream &outputFile, const int
 
     vector<pair<int, int>> result = exec_query(query, N);
 
-    // outputFile << "Query: " << q.second;
+    std::string s="";
+    for (int i = 0; i < this->k; i++)
+        s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(query, this->ht->S[i]))));
 
-
-    // std::string s="";
-    // for (int i = 0; i < this->k; i++)
-    //     s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(query, this->ht->S[i]))));
-
-    //  cout << get<1>(this->ht->table[std::stoi(s, nullptr, 2)][1]) << endl;
+     outputFile << "Query" << get<1>(this->ht->table[std::stoi(s, nullptr, 2)][1]) << endl;
 
     int i = 0;
     vector<pair<int, vector<uint8_t>>> exactNeighboor = this->data.RangeSearch2(query, N);
@@ -89,23 +86,20 @@ int HyperCube::Run(const vector<uint8_t> &query, ofstream &outputFile, const int
         outputFile << "distanceHypercube: " << approximateNeighboor.first << endl;
 
         outputFile << "distanceTrue: " << exactNeighboor[i].first << endl << endl;
-        // exactNeighboor++;
-        // *exactNeighboor->second
 
         i++;
     }
 
         outputFile << "R-near neighbors:" << endl;
 
-    // for (auto &rs : this->data.RangeSearch(query, 20000))
-    // {
-    //     std::string s="";
-    //     for (int i = 0; i < this->k; i++)
-    //         s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(rs, this->ht->S[i]))));
+    for (auto &rs : exactNeighboor)
+    {
+        std::string s="";
+        for (int i = 0; i < this->k; i++)
+            s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(rs.second, this->ht->S[i]))));
 
-    //     outputFile << "image number " << get<1>(this->ht->table[std::stoi(s, nullptr, 2)][1]) << endl;
-    //     // this->ht
-    // }
+        outputFile << "image number " << get<1>(this->ht->table[std::stoi(s, nullptr, 2)][1]) << endl;
+    }
 
     return 0;
 }
