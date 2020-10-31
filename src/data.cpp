@@ -190,7 +190,7 @@ vector<pair<int, int>> Data::BruteFroceNeighbors(const vector<uint8_t> &query, c
 
     for (int i = 0; i < int(this->data.size()); i++)
     {
-        q.push(make_pair(this->ManhattanDistance(this->data[i], query), i));
+        q.push(make_pair(this->distanceFunction(this->data[i], query), i));
     }
 
     int min = (N < int(q.size())) ? N : q.size();
