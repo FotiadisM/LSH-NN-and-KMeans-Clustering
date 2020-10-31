@@ -153,7 +153,7 @@ vector<pair<int, int>> Data::GetClosestNeighbors(const vector<uint8_t> &query, c
 
     for (const auto &point : data)
     {
-        costs.emplace_back(this->ManhattanDistance(point.second, query), point.first);
+        costs.emplace_back(this->distanceFunction(point.second, query), point.first);
     }
 
     auto cmp = [](pair<int, int> left, pair<int, int> right) {
