@@ -17,6 +17,13 @@ private:
 
     void hashData();
     uint32_t calculate_g(const std::vector<uint8_t> &x, hashTable *ht);
+    void print(
+        std::ofstream &outputFile,
+        const int &query,
+        std::vector<std::pair<int, int>> lshResult,
+        std::vector<std::pair<int, int>> trueResult,
+        const int64_t &tLSH, const int64_t &tTrue,
+        std::vector<std::pair<int, int>> rangeSearch);
 
 public:
     LSH(int k, int L, Data &data, uint32_t w = 10, uint32_t m = pow(2, 30) - 5);

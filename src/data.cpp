@@ -133,24 +133,59 @@ vector<vector<uint8_t>> Data::RangeSearch(vector<uint8_t> query, const vector<ve
     return result;
 }
 
+vector<pair<int, int>> Data::RangeSearch2(vector<uint8_t> query, float R)
+{
+    vector<pair<int, int>> result;
+
+    for (int i = 0; i < this->n; i++)
+    {
+        int d = this->ManhattanDistance(this->data[i], query);
+        if (d < R)
+        {
+            result.emplace_back(d, i);
+        }
+    }
+
+    return result;
+}
+
 vector<pair<int, int>> Data::GetClosestNeighbors(const vector<uint8_t> &query, const vector<pair<int, vector<uint8_t>>> &data, const int &N)
 {
     vector<pair<int, int>> result;
-    vector<pair<int, int>> costs;
-
-    for (const auto &point : data)
-    {
-        costs.emplace_back(this->ManhattanDistance(point.second, query), point.first);
-    }
 
     auto cmp = [](pair<int, int> left, pair<int, int> right) {
         return left.first > right.first;
     };
     priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)> q(cmp);
 
-    for (auto &element : costs)
+    for (int i = 0; i < int(data.size()); i++)
     {
-        q.push(element);
+        q.push(make_pair(this->ManhattanDistance(data[i].second, query), i));
+    }
+
+    int min = (N < int(q.size())) ? N : q.size();
+
+    for (int i = 0; i < min; i++)
+    {
+        result.push_back(q.top());
+        q.pop();
+    }
+
+    return result;
+}
+
+vector<pair<int, int>> Data::BruteFroceNeighbors(const vector<uint8_t> &query, const int &N)
+{
+    vector<pair<int, int>> result;
+
+    auto cmp = [](pair<int, int> left, pair<int, int> right) {
+        return left.first > right.first;
+    };
+    priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)> q(cmp);
+
+    for (int i = 0; i < int(this->data.size()); i++)
+    {
+        q.push(make_pair(this->ManhattanDistance(this->data[i], query), i));
     }
 
     int min = (N < int(q.size())) ? N : q.size();

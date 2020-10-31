@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         {
             HyperCube *hc = new HyperCube(input.cube_k, input.M, input.probes, data);
 
-            if (hc->Run(data.data[0], input.outputFile, 50) == -1)
+            if (hc->Run(data.queries, input.outputFile, 50) == -1)
             {
                 cerr << "HyperCube::hyperCubeRun() failed!" << endl;
             }

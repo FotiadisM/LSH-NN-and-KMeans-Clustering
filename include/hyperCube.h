@@ -31,6 +31,13 @@ private:
     std::string toBinary(int n, int size);
     int hamming(std::string str1, std::string str2);
     std::list<std::string> HammingDist(const std::string s, int probes);
+    void print(
+        std::ofstream &outputFile,
+        const int &query,
+        std::vector<std::pair<int, int>> cubeResult,
+        std::vector<std::pair<int, int>> trueResult,
+        const int64_t &tCube, const int64_t &tTrue,
+        std::vector<std::pair<int, int>> rangeSearch);
 
     void hashData();
     void hyperCubeInsert(const std::string &s, int index, std::vector<uint8_t> &point);
@@ -39,6 +46,6 @@ public:
     HyperCube(int k, int M, int probes, Data &data, uint32_t w = 10, uint32_t m = pow(2, 30) - 5);
     ~HyperCube();
 
-    int Run(const std::vector<uint8_t> &query, std::ofstream &outputFileint, const int &N);
+    int Run(const std::vector<std::vector<uint8_t>> &queries, std::ofstream &outputFileint, const int &N);
     std::vector<std::pair<int, int>> exec_query(const std::vector<uint8_t> &query, const int &N);
 };

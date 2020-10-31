@@ -65,14 +65,23 @@ HyperCube::~HyperCube()
     }
 }
 
-int HyperCube::Run(const vector<uint8_t> &query, ofstream &outputFile, const int &N)
+int HyperCube::Run(const vector<vector<uint8_t>> &queries, ofstream &outputFile, const int &N)
 {
-
-    vector<pair<int, int>> result = exec_query(query, N);
-
-    for (auto &neighbor : result)
+    for (int i = 0; i < int(queries.size()); i++)
     {
-        outputFile << "Distance: " << neighbor.first << endl;
+        auto cubeStart = chrono::high_resolution_clock::now();
+        vector<pair<int, int>> cubeResult = this->exec_query(queries[i], N);
+        auto cubeStop = chrono::high_resolution_clock::now();
+
+        auto tCube = chrono::duration_cast<chrono::milliseconds>(cubeStop - cubeStart);
+
+        auto tStart = chrono::high_resolution_clock::now();
+        vector<pair<int, int>> trueResult = this->data.BruteFroceNeighbors(queries[i], N);
+        auto tStop = chrono::high_resolution_clock::now();
+
+        auto tTrue = chrono::duration_cast<chrono::milliseconds>(tStop - tStart);
+
+        this->print(outputFile, i, cubeResult, trueResult, tCube.count(), tTrue.count(), this->data.RangeSearch2(queries[i], R));
     }
 
     return 0;
@@ -187,4 +196,25 @@ list<string> HyperCube::HammingDist(const std::string s, int probes)
     }
 
     return l;
+}
+
+void HyperCube::print(ofstream &outputFile, const int &query, vector<pair<int, int>> cubeResult, vector<pair<int, int>> trueResult, const int64_t &tCube, const int64_t &tTrue, vector<pair<int, int>> rangeSearch)
+{
+    outputFile << "Query: " << query << endl;
+
+    for (int i = 0; i < int(cubeResult.size()); i++)
+    {
+        outputFile << "Nearest neighbor-" << i << ": " << cubeResult[i].second << endl;
+        outputFile << "distanceCube: " << cubeResult[i].first << endl;
+        outputFile << "distanceTrue: " << trueResult[i].first << endl;
+    }
+
+    outputFile << "tCube: " << tCube << endl;
+    outputFile << "tTrue: " << tTrue << endl;
+    outputFile << "R-near neighbors:" << endl;
+
+    for (const auto &point : rangeSearch)
+    {
+        outputFile << point.second << endl;
+    }
 }

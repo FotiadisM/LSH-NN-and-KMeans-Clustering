@@ -33,30 +33,21 @@ LSH::~LSH()
 
 int LSH::Run(const vector<vector<uint8_t>> &queries, ofstream &outputFile, const int &N, const int &R)
 {
-    for (const auto &query : queries)
+    for (int i = 0; i < int(queries.size()); i++)
     {
-        auto start = chrono::high_resolution_clock::now();
-        vector<pair<int, int>> lshResult = this->exec_query(query, N);
-        auto stop = chrono::high_resolution_clock::now();
+        auto lshStart = chrono::high_resolution_clock::now();
+        vector<pair<int, int>> lshResult = this->exec_query(queries[i], N);
+        auto lshStop = chrono::high_resolution_clock::now();
 
-        auto tLSH = chrono::duration_cast<chrono::seconds>(stop - start);
+        auto tLSH = chrono::duration_cast<chrono::milliseconds>(lshStop - lshStart);
 
-        // auto start = chrono::high_resolution_clock::now();
-        // vector<pair<int, int>> trueResult = this->data.RangeSearch(query, this->data.data, 1000);
-        // auto stop = chrono::high_resolution_clock::now();
+        auto tStart = chrono::high_resolution_clock::now();
+        vector<pair<int, int>> trueResult = this->data.BruteFroceNeighbors(queries[i], N);
+        auto tStop = chrono::high_resolution_clock::now();
 
-        // h RangeSearch prepei na gurnaei vector<pair<int, int>> me to distance, index
-        // an mporeis allakse to arxige
+        auto tTrue = chrono::duration_cast<chrono::milliseconds>(tStop - tStart);
 
-        auto tTrue = chrono::duration_cast<chrono::seconds>(stop - start);
-
-        // this->print(lshResult, trueResult, tLSH.count(), tTrue.count)
-
-        // for (auto &point : result)
-        // {
-        //     outputFile << point.first << " " << point.second << endl;
-        // }
-        // outputFile << endl;
+        this->print(outputFile, i, lshResult, trueResult, tLSH.count(), tTrue.count(), this->data.RangeSearch2(queries[i], R));
     }
 
     return 0;
@@ -108,4 +99,24 @@ vector<pair<int, int>> LSH::exec_query(const vector<uint8_t> &query, const int &
     }
 
     return this->data.GetClosestNeighbors(query, possible_neighbors, N);
+}
+void LSH::print(ofstream &outputFile, const int &query, vector<pair<int, int>> lshResult, vector<std::pair<int, int>> trueResult, const int64_t &tLSH, const int64_t &tTrue, vector<std::pair<int, int>> rangeSearch)
+{
+    outputFile << "Query: " << query << endl;
+
+    for (int i = 0; i < int(lshResult.size()); i++)
+    {
+        outputFile << "Nearest neighbor-" << i << ": " << lshResult[i].second << endl;
+        outputFile << "distanceLSH: " << lshResult[i].first << endl;
+        outputFile << "distanceTrue: " << trueResult[i].first << endl;
+    }
+
+    outputFile << "tLSH: " << tLSH << endl;
+    outputFile << "tTrue: " << tTrue << endl;
+    outputFile << "R-near neighbors:" << endl;
+
+    for (const auto &point : rangeSearch)
+    {
+        outputFile << point.second << endl;
+    }
 }
