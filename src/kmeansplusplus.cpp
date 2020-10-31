@@ -135,7 +135,7 @@ uint32_t kmeansplusplus::minDistancefromCentroids(const vector<uint8_t> &point)
 
     for (auto &centroid : this->centroids)
     {
-        D.push_back(this->data.ManhattanDistance(point, centroid));
+        D.push_back(this->data.distanceFunction(point, centroid));
     }
 
     return (D.size() == 0) ? 0 : *min_element(begin(D), end(D));
@@ -234,7 +234,7 @@ int kmeansplusplus::minCentroid(const vector<uint8_t> &point)
 
     for (int i = 0; i < this->nClusters; i++)
     {
-        int d = this->data.ManhattanDistance(this->centroids[i], point);
+        int d = this->data.distanceFunction(this->centroids[i], point);
         if (d < minDistance)
         {
             minDistance = d;

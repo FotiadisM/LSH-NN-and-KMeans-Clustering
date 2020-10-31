@@ -103,7 +103,7 @@ void HyperCube::hashData()
 void HyperCube::hyperCubeInsert(const std::string &s, int index, std::vector<uint8_t> &point)
 {
     // cout << "String is : " << s << endl;
-    // cout << "postion of string is : " << std::stoi(s, nullptr, 2) << endl;
+    // cout << "postion of string is : " << index << endl;
     this->ht->insertItem(std::stoi(s, nullptr, 2), index, point);
 }
 

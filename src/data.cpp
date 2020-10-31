@@ -7,6 +7,11 @@
 
 using namespace std;
 
+Data::Data()
+{
+    this->distanceFunction = &(this->ManhattanDistance);
+}
+
 int Data::InitMnistDataSet(std::ifstream &inputFile)
 {
     int32_t a = 0;
@@ -118,13 +123,13 @@ int Data::ManhattanDistance(const std::vector<uint8_t> &p1, const std::vector<ui
     return d;
 }
 
-vector<vector<uint8_t>> Data::RangeSearch(vector<uint8_t> query, const vector<vector<uint8_t>> &data, float R)
+vector<vector<uint8_t>> Data::RangeSearch(vector<uint8_t> query, float R)
 {
     vector<vector<uint8_t>> result;
 
     for (auto &point : data)
     {
-        if (this->ManhattanDistance(point, query) < R)
+        if (this->distanceFunction(point, query) < R)
         {
             result.push_back(point);
         }
@@ -139,7 +144,7 @@ vector<pair<int, int>> Data::RangeSearch2(vector<uint8_t> query, float R)
 
     for (int i = 0; i < this->n; i++)
     {
-        int d = this->ManhattanDistance(this->data[i], query);
+        int d = this->distanceFunction(this->data[i], query);
         if (d < R)
         {
             result.emplace_back(d, i);
@@ -160,7 +165,7 @@ vector<pair<int, int>> Data::GetClosestNeighbors(const vector<uint8_t> &query, c
 
     for (int i = 0; i < int(data.size()); i++)
     {
-        q.push(make_pair(this->ManhattanDistance(data[i].second, query), i));
+        q.push(make_pair(this->distanceFunction(data[i].second, query), i));
     }
 
     int min = (N < int(q.size())) ? N : q.size();

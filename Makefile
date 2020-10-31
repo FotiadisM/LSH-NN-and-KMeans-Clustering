@@ -60,12 +60,19 @@ valgrind-hc:
 	-N 10
 
 
-run-cluster:
+run-cluster-hc:
 	./$(BDIR)/$(EXEC3) \
 	-i ./assets/train \
 	-c ./cluster.conf \
 	-o ./logs/logs.txt \
 	-m Classic
+
+run-cluster-lsh:
+	./$(BDIR)/$(EXEC3) \
+	-i ./assets/t10k \
+	-c ./cluster.conf \
+	-o ./logs/logs.txt \
+	-m LSH
 
 valgrind-cluster:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC3) \
