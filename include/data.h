@@ -9,7 +9,7 @@ public:
     int n; // number of data
     int d; // dimension
     std::vector<std::vector<uint8_t>> data;
-    std::vector<uint8_t> query;
+    std::vector<std::vector<uint8_t>> queries;
 
     int InitMnistDataSet(std::ifstream &inputFile);
     int ReadQueryFile(std::ifstream &queryFile);

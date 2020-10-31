@@ -263,9 +263,9 @@ void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &output
     for (int i = 0; i < this->nClusters; i++)
     {
         outputFile << "CLUSTER-" << i << " {size: " << clusters[i].size() << ", centroid: [";
-        for (const auto &i : clusters[i])
+        for (const auto &i : this->centroids[i])
         {
-            outputFile << i << ", ";
+            outputFile << int(i) << ", ";
         }
         outputFile << "\b\b]}" << endl
                    << endl; // annoying auto format
@@ -273,4 +273,20 @@ void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &output
 
     outputFile << "clustering_time: " << time << endl;
     outputFile << "Silhouette: []" << endl;
+
+    cout << endl;
+
+    if (this->complete)
+    {
+        for (int i = 0; i < this->nClusters; i++)
+        {
+            outputFile << "CLUSTER-" << i << " {size: " << clusters[i].size() << ", centroid: [";
+            for (const auto &i : clusters[i])
+            {
+                outputFile << i << ", ";
+            }
+            outputFile << "\b\b]}" << endl
+                       << endl; // annoying auto format
+        }
+    }
 }

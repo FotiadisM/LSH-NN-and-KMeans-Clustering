@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 #include <unordered_set>
 
 #include "../include/LSH.h"
@@ -30,15 +31,33 @@ LSH::~LSH()
     }
 }
 
-int LSH::Run(const vector<uint8_t> &query, ofstream &outputFile, const int &N)
+int LSH::Run(const vector<vector<uint8_t>> &queries, ofstream &outputFile, const int &N, const int &R)
 {
-    vector<pair<int, int>> result = this->exec_query(query, N);
-
-    for (auto &point : result)
+    for (const auto &query : queries)
     {
-        outputFile << point.first << " " << point.second << endl;
+        auto start = chrono::high_resolution_clock::now();
+        vector<pair<int, int>> lshResult = this->exec_query(query, N);
+        auto stop = chrono::high_resolution_clock::now();
+
+        auto tLSH = chrono::duration_cast<chrono::seconds>(stop - start);
+
+        // auto start = chrono::high_resolution_clock::now();
+        // vector<pair<int, int>> trueResult = this->data.RangeSearch(query, this->data.data, 1000);
+        // auto stop = chrono::high_resolution_clock::now();
+
+        // h RangeSearch prepei na gurnaei vector<pair<int, int>> me to distance, index
+        // an mporeis allakse to arxige
+
+        auto tTrue = chrono::duration_cast<chrono::seconds>(stop - start);
+
+        // this->print(lshResult, trueResult, tLSH.count(), tTrue.count)
+
+        // for (auto &point : result)
+        // {
+        //     outputFile << point.first << " " << point.second << endl;
+        // }
+        // outputFile << endl;
     }
-    outputFile << endl;
 
     return 0;
 }

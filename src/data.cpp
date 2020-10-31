@@ -37,6 +37,7 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
         cerr << "Input file io error" << endl;
         return -1;
     }
+    int x = __builtin_bswap32(a);
 
     inputFile.read((char *)(&a), sizeof(a));
     if (!inputFile)
@@ -44,8 +45,9 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
         cerr << "Input file io error" << endl;
         return -1;
     }
+    int y = __builtin_bswap32(a);
 
-    this->d = 28 * 28;
+    this->d = x * y;
 
     for (int i = 0; i < this->n; i++)
     {
@@ -71,15 +73,22 @@ int Data::ReadQueryFile(std::ifstream &queryFile)
 {
     uint8_t b;
 
-    for (int i = 0; i < this->d; i++)
+    while (queryFile)
     {
-        queryFile.read((char *)(&b), sizeof(b));
-        if (!queryFile)
+        vector<uint8_t> point;
+
+        for (int i = 0; i < this->d; i++)
         {
-            cerr << "read() from query file failed" << endl;
-            return -1;
+            queryFile.read((char *)(&b), sizeof(b));
+            if (!queryFile)
+            {
+                cerr << "read() from query file failed" << endl;
+                return -1;
+            }
+            point.push_back(b);
         }
-        this->query.push_back(b);
+
+        this->queries.push_back(point);
     }
 
     return 0;

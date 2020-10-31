@@ -62,12 +62,13 @@ int main(int argc, char *argv[])
         //     cerr << "Data::ReadQueryFile() failed" << endl;
         //     return -1;
         // }
+        data.queries.push_back(data.data[0]);
 
         if (input.mode == _lsh)
         {
             LSH *lsh = new LSH(input.lsh_k, input.L, data);
 
-            if (lsh->Run(data.data[2000], input.outputFile, 50) == -1)
+            if (lsh->Run(data.queries, input.outputFile, 50, input.R) == -1)
             {
                 cerr << "LSH::Run() failed" << endl;
             }
