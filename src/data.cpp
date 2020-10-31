@@ -7,6 +7,11 @@
 
 using namespace std;
 
+Data::Data()
+{
+    this->distanceFunction = &(this->ManhattanDistance);
+}
+
 int Data::InitMnistDataSet(std::ifstream &inputFile)
 {
     int32_t a = 0;
@@ -115,7 +120,7 @@ vector<vector<uint8_t>> Data::RangeSearch(vector<uint8_t> query, float R)
 
     for (auto &point : data)
     {
-        if (this->ManhattanDistance(point, query) < R)
+        if (this->distanceFunction(point, query) < R)
         {
             result.push_back(point);
         }
@@ -131,7 +136,7 @@ vector<pair<int, vector<uint8_t>>> Data::RangeSearch2(vector<uint8_t> query, flo
 
     for (auto &point : data)
     {
-        if ((dist = this->ManhattanDistance(point, query)) < R)
+        if ((dist = this->distanceFunction(point, query)) < R)
         {
             result.emplace_back(dist, point);
         }
