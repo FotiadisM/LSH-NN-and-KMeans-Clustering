@@ -70,10 +70,42 @@ int HyperCube::Run(const vector<uint8_t> &query, ofstream &outputFile, const int
 
     vector<pair<int, int>> result = exec_query(query, N);
 
-    for (auto &neighbor : result)
+    // outputFile << "Query: " << q.second;
+
+
+    // std::string s="";
+    // for (int i = 0; i < this->k; i++)
+    //     s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(query, this->ht->S[i]))));
+
+    //  cout << get<1>(this->ht->table[std::stoi(s, nullptr, 2)][1]) << endl;
+
+    int i = 0;
+    vector<pair<int, vector<uint8_t>>> exactNeighboor = this->data.RangeSearch2(query, N);
+
+    for (auto& approximateNeighboor : result)
     {
-        outputFile << "Distance: " << neighbor.first << endl;
+        outputFile << "Nearest neighbor " << i << " : " << approximateNeighboor.second << endl;
+        
+        outputFile << "distanceHypercube: " << approximateNeighboor.first << endl;
+
+        outputFile << "distanceTrue: " << exactNeighboor[i].first << endl << endl;
+        // exactNeighboor++;
+        // *exactNeighboor->second
+
+        i++;
     }
+
+        outputFile << "R-near neighbors:" << endl;
+
+    // for (auto &rs : this->data.RangeSearch(query, 20000))
+    // {
+    //     std::string s="";
+    //     for (int i = 0; i < this->k; i++)
+    //         s = s + std::to_string(this->fTable[i]->calculate_f(std::to_string(this->ht->calculate_h(rs, this->ht->S[i]))));
+
+    //     outputFile << "image number " << get<1>(this->ht->table[std::stoi(s, nullptr, 2)][1]) << endl;
+    //     // this->ht
+    // }
 
     return 0;
 }
@@ -94,7 +126,7 @@ void HyperCube::hashData()
 void HyperCube::hyperCubeInsert(const std::string &s, int index, std::vector<uint8_t> &point)
 {
     // cout << "String is : " << s << endl;
-    // cout << "postion of string is : " << std::stoi(s, nullptr, 2) << endl;
+    // cout << "postion of string is : " << index << endl;
     this->ht->insertItem(std::stoi(s, nullptr, 2), index, point);
 }
 

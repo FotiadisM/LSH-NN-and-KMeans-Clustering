@@ -17,8 +17,11 @@ public:
     int EuclideanDistance(std::vector<uint8_t> &p1, std::vector<uint8_t> &p2);
     int ManhattanDistance(const std::vector<uint8_t> &p1, const std::vector<uint8_t> &p2);
 
+    std::vector<std::pair<int, std::vector<uint8_t>>> 
+    RangeSearch2(std::vector<uint8_t> query, float R);
+
     std::vector<std::vector<uint8_t>>
-    RangeSearch(std::vector<uint8_t> query, const std::vector<std::vector<uint8_t>> &data, float R);
+    RangeSearch(std::vector<uint8_t> query, float R);
 
     std::vector<std::pair<int, int>>
     GetClosestNeighbors(const std::vector<uint8_t> &query, const std::vector<std::pair<int, std::vector<uint8_t>>> &data, const int &N);
