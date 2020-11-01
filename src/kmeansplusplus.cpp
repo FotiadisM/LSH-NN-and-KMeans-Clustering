@@ -4,6 +4,7 @@
 #include <random>
 #include <chrono>
 #include <algorithm>
+#include <queue>
 #include <unordered_set>
 
 #include "../include/kmeansplusplus.h"
@@ -45,6 +46,7 @@ int kmeansplusplus::Run(ofstream &outputFile)
 
     this->initCentroids();
 
+    int iterations = 0;
     while (totalChange > this->minChange)
     {
         switch (this->method)
@@ -83,13 +85,15 @@ int kmeansplusplus::Run(ofstream &outputFile)
 
             totalChange += clusterChange;
         }
-        // cout << "total " << totalChange << endl;
+        iterations++;
+        cout << "total " << totalChange << endl;
     }
     auto stop = chrono::high_resolution_clock::now();
+    cout << "Iterations: " << iterations << endl;
 
-    auto duration = chrono::duration_cast<chrono::seconds>(stop - start);
+    auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
 
-    this->print(clusters, outputFile, duration.count());
+    this->print(clusters, outputFile, duration.count(), this->Silouette(clusters));
 
     return 0;
 }
@@ -245,7 +249,61 @@ int kmeansplusplus::minCentroid(const vector<uint8_t> &point)
     return index;
 }
 
-void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &outputFile, int64_t time)
+int kmeansplusplus::nextCentroid(const vector<uint8_t> &point)
+{
+    auto cmp = [](pair<int, int> left, pair<int, int> right) {
+        return left.first > right.first;
+    };
+    priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(cmp)> q(cmp);
+
+    for (int i = 0; i < this->nClusters; i++)
+    {
+        q.push(make_pair(this->data.distanceFunction(this->centroids[i], point), i));
+    }
+
+    q.pop();
+
+    return q.top().second;
+}
+
+vector<double> kmeansplusplus::Silouette(vector<std::vector<int>> clusters)
+{
+    vector<double> result;
+    vector<int> ai = vector<int>(this->data.n, 0);
+    vector<int> bi = vector<int>(this->data.n, 0);
+    vector<double> si = vector<double>(this->data.n, 0);
+
+    for (const auto &cluster : clusters)
+    {
+        for (const int &i : cluster)
+        {
+            for (const int &j : cluster)
+            {
+                if (i != j)
+                    ai[i] += this->data.distanceFunction(this->data.data[i], this->data.data[j]);
+            }
+
+            for (const int &j : clusters[this->nextCentroid(this->data.data[i])])
+            {
+                bi[i] += this->data.distanceFunction(this->data.data[i], this->data.data[j]);
+            }
+
+            si[i] = double(bi[i] - ai[i]) / double((ai[i] < bi[i]) ? bi[i] : ai[i]);
+        }
+
+        double mean = 0;
+
+        for (const int &i : cluster)
+        {
+            mean += si[i];
+        }
+        result.push_back(mean / double(cluster.size()));
+    }
+
+    return result;
+}
+
+void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &outputFile, int64_t time, vector<double> silouette)
 {
     switch (this->method)
     {
@@ -272,9 +330,16 @@ void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &output
     }
 
     outputFile << "clustering_time: " << time << endl;
-    outputFile << "Silhouette: []" << endl;
+    outputFile << "Silhouette: [";
 
-    cout << endl;
+    double sktotal = 0;
+    for (const double &i : silouette)
+    {
+        outputFile << i << ", ";
+        sktotal += i;
+    }
+    outputFile << "stotal = " << sktotal / double(silouette.size()) << "]" << endl
+               << endl;
 
     if (this->complete)
     {

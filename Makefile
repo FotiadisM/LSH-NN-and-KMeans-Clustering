@@ -59,10 +59,9 @@ valgrind-hc:
 	-o ./logs/logs.txt \
 	-N 10
 
-
-run-cluster-hc:
+run-cluster-classic:
 	./$(BDIR)/$(EXEC3) \
-	-i ./assets/train \
+	-i ./assets/t10k \
 	-c ./cluster.conf \
 	-o ./logs/logs.txt \
 	-m Classic
@@ -73,6 +72,13 @@ run-cluster-lsh:
 	-c ./cluster.conf \
 	-o ./logs/logs.txt \
 	-m LSH
+
+run-cluster-hc:
+	./$(BDIR)/$(EXEC3) \
+	-i ./assets/t10k \
+	-c ./cluster.conf \
+	-o ./logs/logs.txt \
+	-m Hypercube
 
 valgrind-cluster:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC3) \

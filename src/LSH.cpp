@@ -47,7 +47,7 @@ int LSH::Run(const vector<vector<uint8_t>> &queries, ofstream &outputFile, const
 
         auto tTrue = chrono::duration_cast<chrono::milliseconds>(tStop - tStart);
 
-        this->print(outputFile, i, lshResult, trueResult, tLSH.count(), tTrue.count(), this->data.RangeSearch2(queries[i], R));
+        this->print(outputFile, i, lshResult, trueResult, tLSH.count(), tTrue.count(), this->data.RangeSearch(queries[i], R));
     }
 
     return 0;

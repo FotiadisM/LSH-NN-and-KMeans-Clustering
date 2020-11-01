@@ -123,22 +123,7 @@ int Data::ManhattanDistance(const std::vector<uint8_t> &p1, const std::vector<ui
     return d;
 }
 
-vector<vector<uint8_t>> Data::RangeSearch(vector<uint8_t> query, float R)
-{
-    vector<vector<uint8_t>> result;
-
-    for (auto &point : data)
-    {
-        if (this->distanceFunction(point, query) < R)
-        {
-            result.push_back(point);
-        }
-    }
-
-    return result;
-}
-
-vector<pair<int, int>> Data::RangeSearch2(vector<uint8_t> query, float R)
+vector<pair<int, int>> Data::RangeSearch(vector<uint8_t> query, float R)
 {
     vector<pair<int, int>> result;
 
@@ -165,7 +150,6 @@ vector<pair<int, int>> Data::GetClosestNeighbors(const vector<uint8_t> &query, c
 
     for (int i = 0; i < int(data.size()); i++)
     {
-        // anti gia data[i].first pernages i cool dude
         q.push(make_pair(this->distanceFunction(data[i].second, query), data[i].first));
     }
 
