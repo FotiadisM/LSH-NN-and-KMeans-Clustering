@@ -70,16 +70,16 @@ int kmeansplusplus::Run(ofstream &outputFile)
             for (int j = 0; j < this->data.d; j++)
             {
                 int mean = 0;
-                vector<uint8_t> v;
+                // vector<uint8_t> v;
 
                 for (int &index : clusters[i])
                 {
-                    // mean += int(this->data.data[index][j]);
-                    v.push_back(int(this->data.data[index][j]));
+                    mean += int(this->data.data[index][j]);
+                    // v.push_back(int(this->data.data[index][j]));
                 }
 
-                mean = this->median(v);
-                // mean /= clusters[i].size();
+                // mean = this->median(v);
+                mean /= clusters[i].size();
                 clusterChange += abs(int(this->centroids[i][j]) - mean);
 
                 this->centroids[i][j] = mean;

@@ -26,7 +26,7 @@ private:
         std::vector<std::pair<int, int>> rangeSearch);
 
 public:
-    LSH(int k, int L, Data &data, uint32_t w = 10, uint32_t m = pow(2, 30) - 5);
+    LSH(int k, int L, Data &data, uint32_t w = 10000, uint32_t m = pow(2, 30) - 5);
     ~LSH();
 
     int Run(const std::vector<std::vector<uint8_t>> &queries, std::ofstream &outputFile, const int &N, const int &R);

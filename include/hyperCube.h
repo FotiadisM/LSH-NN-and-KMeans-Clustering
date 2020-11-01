@@ -45,7 +45,7 @@ private:
     void hyperCubeInsert(const std::string &s, int index, std::vector<uint8_t> &point);
 
 public:
-    HyperCube(int k, int M, int probes, Data &data, uint32_t w = 10, uint32_t m = pow(2, 30) - 5);
+    HyperCube(int k, int M, int probes, Data &data, uint32_t w = 40000, uint32_t m = pow(2, 30) - 5);
     ~HyperCube();
 
     int Run(const std::vector<std::vector<uint8_t>> &queries, std::ofstream &outputFileint, const int &N);

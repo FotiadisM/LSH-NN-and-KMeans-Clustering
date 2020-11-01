@@ -243,7 +243,7 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
         else
         {
             this->mode = _cube;
-            this->cube_k = 3;
+            this->cube_k = 14;
             this->M = 10;
             this->probes = 2;
 
