@@ -38,24 +38,28 @@ $(BDIR)/$(EXEC3): $(OBJ)
 run-lsh:
 	./$(BDIR)/$(EXEC1) \
 	-i ./assets/t10k \
+	-q ./assets/queryFile \
 	-o ./logs/logs.txt \
 	-N 10
 
 valgrind-lsh:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC1) \
 	-i ./assets/t10k \
+	-q ./assets/queryFile \
 	-o ./logs/logs.txt \
 	-N 10
 
 run-hc:
 	./$(BDIR)/$(EXEC2) \
 	-i ./assets/t10k \
+	-q ./assets/queryFile \
 	-o ./logs/logs.txt \
 	-N 10
 
 valgrind-hc:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC2) \
 	-i ./assets/t10k \
+	-q ./assets/queryFile \
 	-o ./logs/logs.txt \
 	-N 10
 

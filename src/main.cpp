@@ -33,12 +33,12 @@ int main(int argc, char *argv[])
             input.OpenInputFile(file);
         }
 
-        // while (!input.queryFile.is_open())
-        // {
-        //     cout << "Please provide a path to an query file" << endl;
-        //     cin >> file;
-        //     input.OpenQueryFile(file);
-        // }
+        while (!input.queryFile.is_open())
+        {
+            cout << "Please provide a path to an query file" << endl;
+            cin >> file;
+            input.OpenQueryFile(file);
+        }
 
         if (data.InitMnistDataSet(input.inputFile) == -1)
         {
@@ -76,12 +76,11 @@ int main(int argc, char *argv[])
         else
         {
 
-            // if (data.ReadQueryFile(input.queryFile) == -1)
-            // {
-            //     cerr << "Data::ReadQueryFile() failed" << endl;
-            //     return -1;
-            // }
-            data.queries.push_back(data.data[0]);
+            if (data.ReadQueryFile(input.queryFile) == -1)
+            {
+                cerr << "Data::ReadQueryFile() failed" << endl;
+                return -1;
+            }
 
             if (input.mode == _lsh)
             {

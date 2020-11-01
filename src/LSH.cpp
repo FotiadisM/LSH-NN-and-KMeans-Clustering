@@ -18,7 +18,7 @@ LSH::LSH(int k, int L, Data &data, uint32_t w, uint32_t m)
         this->tables[i] = new hashTable(this->data.n / 32, this->k, this->data.d, this->w, this->m, this->M);
     }
 
-    cout << "Running with w: " << w << "m : " << this->m << " and M : " << this->M << endl;
+    cout << "Running with w: " << w << " m: " << this->m << " and M: " << this->M << endl;
 
     hashData();
 }

@@ -83,13 +83,7 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
         {
             perror("open()");
             cerr << "Failed to open " << val << endl;
-            // return -1;
         }
-    }
-    else
-    {
-        cerr << "Input file required" << endl;
-        // return -1;
     }
 
     if ((val = this->getCmdOption(argv, argv + argc, "-o")) != nullptr)
@@ -102,7 +96,6 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
         {
             perror("open()");
             cerr << "Failed to open " << val << endl;
-            // return -1;
         }
     }
     else
@@ -219,11 +212,6 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
                 cerr << "Failed to open " << val << endl;
                 return -1;
             }
-        }
-        else
-        {
-            cerr << "Query file required" << endl;
-            // return -1;
         }
 
         if ((val = this->getCmdOption(argv, argv + argc, "-N")) != nullptr)

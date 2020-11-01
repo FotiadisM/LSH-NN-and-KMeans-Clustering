@@ -76,24 +76,29 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
 
 int Data::ReadQueryFile(std::ifstream &queryFile)
 {
+    int count = 0;
     uint8_t b;
+    vector<uint8_t> point(this->d);
 
-    while (queryFile)
+    while (1)
     {
-        vector<uint8_t> point;
-
-        for (int i = 0; i < this->d; i++)
+        queryFile.read((char *)(&b), sizeof(b));
+        if (queryFile.eof())
         {
-            queryFile.read((char *)(&b), sizeof(b));
-            if (!queryFile)
+            if (count != 0)
             {
-                cerr << "read() from query file failed" << endl;
+                cerr << "Corupter query file" << endl;
                 return -1;
             }
-            point.push_back(b);
+            break;
         }
 
-        this->queries.push_back(point);
+        point[count] = b;
+        if (++count == this->d)
+        {
+            this->queries.push_back(point);
+            count = 0;
+        }
     }
 
     return 0;
