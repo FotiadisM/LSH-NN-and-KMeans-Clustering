@@ -1,4 +1,6 @@
 #include <iostream>
+#include <random>
+#include <chrono>
 
 #include "../include/hashTable.h"
 
@@ -44,13 +46,17 @@ int hashTable::calculate_a(const uint8_t &xi, const int &si)
 
 void hashTable::calculate_s(vector<vector<int>> &S, int k, int d, int w)
 {
+    default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
+    uniform_real_distribution<int> unif(0, w);
+
     S.resize(k, vector<int>(d));
 
     for (int i = 0; i < k; i++)
     {
         for (int j = 0; j < d; j++)
         {
-            S[i][j] = (rand() % w);
+            // S[i][j] = (rand() % w);
+            S[i][j] = unif(re);
         }
     }
 }
