@@ -65,9 +65,10 @@ HyperCube::~HyperCube()
     {
         delete this->fTable[i];
     }
+    delete this->ht;
 }
 
-int HyperCube::Run(const vector<vector<uint8_t>> &queries, ofstream &outputFile, const int &N)
+int HyperCube::Run(const vector<vector<uint8_t>> &queries, ofstream &outputFile, const int &N, const int &R)
 {
     for (int i = 0; i < int(queries.size()); i++)
     {

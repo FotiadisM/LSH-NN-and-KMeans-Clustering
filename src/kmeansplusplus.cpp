@@ -36,7 +36,13 @@ kmeansplusplus::kmeansplusplus(const int &clusters, const bool &complete, const 
     this->cube = new HyperCube(cube_k, M, probes, data);
 }
 
-kmeansplusplus::~kmeansplusplus() {}
+kmeansplusplus::~kmeansplusplus()
+{
+    if (this->lsh != nullptr)
+        delete this->lsh;
+    if (this->cube != nullptr)
+        delete this->cube;
+}
 
 int kmeansplusplus::Run(ofstream &outputFile)
 {

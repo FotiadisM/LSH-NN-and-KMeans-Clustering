@@ -23,7 +23,7 @@ public:
 class HyperCube
 {
 private:
-    int k, M, probes, R;
+    int k, M, probes;
     Data &data;
     hashTable *ht;
     std::vector<f *> fTable;
@@ -48,6 +48,6 @@ public:
     HyperCube(int k, int M, int probes, Data &data, uint32_t w = 40000, uint32_t m = pow(2, 30) - 5);
     ~HyperCube();
 
-    int Run(const std::vector<std::vector<uint8_t>> &queries, std::ofstream &outputFileint, const int &N);
+    int Run(const std::vector<std::vector<uint8_t>> &queries, std::ofstream &outputFileint, const int &N, const int &R);
     std::vector<std::pair<int, int>> exec_query(const std::vector<uint8_t> &query, const int &N);
 };

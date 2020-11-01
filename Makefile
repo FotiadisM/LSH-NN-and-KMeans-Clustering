@@ -40,7 +40,7 @@ run-lsh:
 	-i ./assets/t10k \
 	-q ./assets/queryFile \
 	-o ./logs/logs.txt \
-	-N 10
+	-N 50
 
 valgrind-lsh:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC1) \
@@ -54,14 +54,14 @@ run-hc:
 	-i ./assets/t10k \
 	-q ./assets/queryFile \
 	-o ./logs/logs.txt \
-	-N 10
+	-N 50
 
 valgrind-hc:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC2) \
 	-i ./assets/t10k \
 	-q ./assets/queryFile \
 	-o ./logs/logs.txt \
-	-N 10
+	-N 50
 
 run-cluster-classic:
 	./$(BDIR)/$(EXEC3) \
@@ -89,7 +89,7 @@ valgrind-cluster:
 	-i ./assets/t10k \
 	-c ./cluster.conf \
 	-o ./logs/logs.txt \
-	-m Classic
+	-m LSH
 
 clean:
 	rm -f $(ODIR)/*.o

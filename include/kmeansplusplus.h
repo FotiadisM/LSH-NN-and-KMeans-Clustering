@@ -24,8 +24,8 @@ private:
     int maxIterations = 90;
     Method method;
     Data &data;
-    LSH *lsh;
-    HyperCube *cube;
+    LSH *lsh = nullptr;
+    HyperCube *cube = nullptr;
     std::vector<std::vector<uint8_t>> centroids;
 
     void initCentroids();

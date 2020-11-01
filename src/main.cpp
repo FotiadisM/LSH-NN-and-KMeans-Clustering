@@ -83,9 +83,9 @@ int main(int argc, char *argv[])
 
             if (input.mode == _lsh)
             {
-                LSH *lsh = new LSH(input.lsh_k, input.L, data);
+                LSH *lsh = new LSH(input.lsh_k, input.L, data, 10000, 200);
 
-                if (lsh->Run(data.queries, input.outputFile, 50, input.R) == -1)
+                if (lsh->Run(data.queries, input.outputFile, input.N, input.R) == -1)
                 {
                     cerr << "LSH::Run() failed" << endl;
                 }
@@ -94,13 +94,14 @@ int main(int argc, char *argv[])
             }
             else
             {
-                // HyperCube *hc = new HyperCube(input.cube_k, input.M, input.probes, data);
                 HyperCube *hc = new HyperCube(floor(log2(data.n)), input.M, input.probes, data);
 
-                if (hc->Run(data.queries, input.outputFile, 50) == -1)
+                if (hc->Run(data.queries, input.outputFile, input.N, input.R) == -1)
                 {
                     cerr << "HyperCube::hyperCubeRun() failed!" << endl;
                 }
+
+                delete hc;
             }
         }
 
