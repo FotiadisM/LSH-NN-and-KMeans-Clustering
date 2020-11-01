@@ -21,6 +21,7 @@ private:
     int lsh_k, L;          // for lsh
     int cube_k, M, probes; // for hypercube
     int minChange = 0;
+    int maxIterations = 90;
     Method method;
     Data &data;
     LSH *lsh;
