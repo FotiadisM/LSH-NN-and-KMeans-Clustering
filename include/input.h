@@ -29,4 +29,7 @@ public:
     ~Input();
 
     int parseCmdOptions(const int &argc, char *argv[]);
+
+    int OpenInputFile(const std::string &file);
+    int OpenQueryFile(const std::string &file);
 };

@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    Data data;
+    int flag = true;
     Input input;
 
     srand(time(NULL));
@@ -21,68 +21,106 @@ int main(int argc, char *argv[])
         cerr << "input::ParseCmdOptions() failed" << endl;
     }
 
-    if (data.InitMnistDataSet(input.inputFile) == -1)
+    while (flag)
     {
-        cerr << "Data::InitMnistDataSet() failed" << endl;
-        return -1;
-    }
+        string file;
+        Data data;
 
-    if (input.mode == _cluster)
-    {
-        kmeansplusplus *kmeans;
+        while (!input.inputFile.is_open())
+        {
+            cout << "Please provide a path to an input file" << endl;
+            cin >> file;
+            input.OpenInputFile(file);
+        }
 
-        if (!strcmp(input.method, "Classic"))
-        {
-            kmeans = new kmeansplusplus(input.nClusters, input.complete, data);
-        }
-        else if (!strcmp(input.method, "LSH"))
-        {
-            kmeans = new kmeansplusplus(input.nClusters, input.complete, input.lsh_k, input.L, data);
-        }
-        else if (!strcmp(input.method, "Hypercube"))
-        {
-            kmeans = new kmeansplusplus(input.nClusters, input.complete, input.cube_k, input.M, input.probes, data);
-        }
-        else
-        {
-            cout << "Method: " << input.method << "not recognized" << endl;
+        // while (!input.queryFile.is_open())
+        // {
+        //     cout << "Please provide a path to an query file" << endl;
+        //     cin >> file;
+        //     input.OpenQueryFile(file);
+        // }
 
+        if (data.InitMnistDataSet(input.inputFile) == -1)
+        {
+            cerr << "Data::InitMnistDataSet() failed" << endl;
             return -1;
         }
 
-        kmeans->Run(input.outputFile);
-
-        delete kmeans;
-    }
-    else
-    {
-
-        // if (data.ReadQueryFile(input.queryFile) == -1)
-        // {
-        //     cerr << "Data::ReadQueryFile() failed" << endl;
-        //     return -1;
-        // }
-        data.queries.push_back(data.data[0]);
-
-        if (input.mode == _lsh)
+        if (input.mode == _cluster)
         {
-            LSH *lsh = new LSH(input.lsh_k, input.L, data);
+            kmeansplusplus *kmeans;
 
-            if (lsh->Run(data.queries, input.outputFile, 50, input.R) == -1)
+            if (!strcmp(input.method, "Classic"))
             {
-                cerr << "LSH::Run() failed" << endl;
+                kmeans = new kmeansplusplus(input.nClusters, input.complete, data);
+            }
+            else if (!strcmp(input.method, "LSH"))
+            {
+                kmeans = new kmeansplusplus(input.nClusters, input.complete, input.lsh_k, input.L, data);
+            }
+            else if (!strcmp(input.method, "Hypercube"))
+            {
+                kmeans = new kmeansplusplus(input.nClusters, input.complete, input.cube_k, input.M, input.probes, data);
+            }
+            else
+            {
+                cout << "Method: " << input.method << "not recognized" << endl;
+
+                return -1;
             }
 
-            delete lsh;
+            kmeans->Run(input.outputFile);
+
+            delete kmeans;
         }
         else
         {
-            // HyperCube *hc = new HyperCube(input.cube_k, input.M, input.probes, data);
-            HyperCube *hc = new HyperCube(floor(log2(data.n)), input.M, input.probes, data);
 
-            if (hc->Run(data.queries, input.outputFile, 50) == -1)
+            // if (data.ReadQueryFile(input.queryFile) == -1)
+            // {
+            //     cerr << "Data::ReadQueryFile() failed" << endl;
+            //     return -1;
+            // }
+            data.queries.push_back(data.data[0]);
+
+            if (input.mode == _lsh)
             {
-                cerr << "HyperCube::hyperCubeRun() failed!" << endl;
+                LSH *lsh = new LSH(input.lsh_k, input.L, data);
+
+                if (lsh->Run(data.queries, input.outputFile, 50, input.R) == -1)
+                {
+                    cerr << "LSH::Run() failed" << endl;
+                }
+
+                delete lsh;
+            }
+            else
+            {
+                // HyperCube *hc = new HyperCube(input.cube_k, input.M, input.probes, data);
+                HyperCube *hc = new HyperCube(floor(log2(data.n)), input.M, input.probes, data);
+
+                if (hc->Run(data.queries, input.outputFile, 50) == -1)
+                {
+                    cerr << "HyperCube::hyperCubeRun() failed!" << endl;
+                }
+            }
+        }
+
+        string str;
+        while (1)
+        {
+            cout << "Would like to run again with different input? [Y, N]" << endl;
+            cin >> str;
+            if (!str.compare("Y") || !str.compare("y"))
+            {
+                input.inputFile.close();
+                input.queryFile.close();
+                break;
+            }
+            else if (!str.compare("N") || !str.compare("n"))
+            {
+                flag = false;
+                break;
             }
         }
     }

@@ -46,6 +46,28 @@ char *Input::getCmdOption(char **begin, char **end, const string &option)
     return nullptr;
 }
 
+int Input::OpenInputFile(const string &file)
+{
+    this->inputFile.open(file, ifstream::in | ifstream::binary);
+    if (!this->inputFile)
+    {
+        perror("open()");
+    }
+
+    return 0;
+}
+
+int Input::OpenQueryFile(const string &file)
+{
+    this->queryFile.open(file, ifstream::in | ifstream::binary);
+    if (!this->queryFile)
+    {
+        perror("open()");
+    }
+
+    return 0;
+}
+
 int Input::parseCmdOptions(const int &argc, char *argv[])
 {
     char *val = nullptr;
@@ -61,13 +83,13 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
         {
             perror("open()");
             cerr << "Failed to open " << val << endl;
-            return -1;
+            // return -1;
         }
     }
     else
     {
         cerr << "Input file required" << endl;
-        return -1;
+        // return -1;
     }
 
     if ((val = this->getCmdOption(argv, argv + argc, "-o")) != nullptr)
@@ -80,7 +102,7 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
         {
             perror("open()");
             cerr << "Failed to open " << val << endl;
-            return -1;
+            // return -1;
         }
     }
     else
