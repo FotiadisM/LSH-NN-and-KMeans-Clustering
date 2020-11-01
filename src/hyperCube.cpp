@@ -19,6 +19,8 @@ f::~f() {}
 int f::calculate_f(std::string key)
 {
     int num;
+    default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
+    uniform_int_distribution<int> unif(0, 2);
 
     if (this->setOfZeros.find(key) != this->setOfZeros.end())
         return 0;
@@ -26,7 +28,7 @@ int f::calculate_f(std::string key)
         return 1;
     else
     {
-        num = rand() % 2;
+        num = unif(re) % 2;
         if (num == 0)
         {
             this->setOfZeros.insert(key);

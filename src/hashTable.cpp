@@ -47,7 +47,7 @@ int hashTable::calculate_a(const uint8_t &xi, const int &si)
 void hashTable::calculate_s(vector<vector<int>> &S, int k, int d, int w)
 {
     default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
-    uniform_real_distribution<int> unif(0, w);
+    uniform_int_distribution<int> unif(0, w);
 
     S.resize(k, vector<int>(d));
 

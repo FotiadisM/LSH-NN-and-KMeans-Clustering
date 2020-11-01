@@ -33,13 +33,6 @@ int main(int argc, char *argv[])
             input.OpenInputFile(file);
         }
 
-        while (!input.queryFile.is_open())
-        {
-            cout << "Please provide a path to an query file" << endl;
-            cin >> file;
-            input.OpenQueryFile(file);
-        }
-
         if (data.InitMnistDataSet(input.inputFile) == -1)
         {
             cerr << "Data::InitMnistDataSet() failed" << endl;
@@ -75,6 +68,12 @@ int main(int argc, char *argv[])
         }
         else
         {
+            while (!input.queryFile.is_open())
+            {
+                cout << "Please provide a path to an query file" << endl;
+                cin >> file;
+                input.OpenQueryFile(file);
+            }
 
             if (data.ReadQueryFile(input.queryFile) == -1)
             {

@@ -2,6 +2,8 @@
 #include <unordered_set>
 #include <vector>
 #include <string>
+#include <chrono>
+#include <random>
 
 #include "hashTable.h"
 #include "data.h"
