@@ -30,6 +30,7 @@ private:
     void initCentroids();
     uint32_t minDistancefromCentroids(const std::vector<uint8_t> &point);
     int findNextCentroid(const std::vector<double> &P, const double x); // used only for initalization
+    int median(std::vector<uint8_t> &v);
     int minCentroid(const std::vector<uint8_t> &point);
     int nextCentroid(const std::vector<uint8_t> &point);
     void print(const std::vector<std::vector<int>> &clusters, std::ofstream &outputFile, int64_t time, std::vector<double> silouette);

@@ -63,7 +63,6 @@ int kmeansplusplus::Run(ofstream &outputFile)
         }
 
         totalChange = 0;
-
         for (int i = 0; i < this->nClusters; i++)
         {
             int clusterChange = 0;
@@ -71,12 +70,15 @@ int kmeansplusplus::Run(ofstream &outputFile)
             for (int j = 0; j < this->data.d; j++)
             {
                 int mean = 0;
+                // vector<uint8_t> v;
 
                 for (int &index : clusters[i])
                 {
                     mean += int(this->data.data[index][j]);
+                    // v.push_back(int(this->data.data[index][j]));
                 }
 
+                // mean = this->median(v);
                 mean /= clusters[i].size();
                 clusterChange += abs(int(this->centroids[i][j]) - mean);
 
@@ -156,6 +158,13 @@ int kmeansplusplus::findNextCentroid(const vector<double> &P, const double x)
     }
 
     return -1;
+}
+
+int kmeansplusplus::median(vector<uint8_t> &v)
+{
+    nth_element(v.begin(), v.begin() + v.size() / 2, v.end());
+
+    return (v.size() == 0 ? 0 : v[v.size() / 2]);
 }
 
 vector<vector<int>> kmeansplusplus::LloydsClustering()
