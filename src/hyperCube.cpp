@@ -79,7 +79,7 @@ int HyperCube::Run(const vector<vector<uint8_t>> &queries, ofstream &outputFile,
         auto tCube = chrono::duration_cast<chrono::milliseconds>(cubeStop - cubeStart);
 
         auto tStart = chrono::high_resolution_clock::now();
-        vector<pair<int, int>> trueResult = this->data.BruteFroceNeighbors(queries[i], N);
+        vector<pair<int, int>> trueResult = this->data.BruteForceNeighbors(queries[i], N);
         auto tStop = chrono::high_resolution_clock::now();
 
         auto tTrue = chrono::duration_cast<chrono::milliseconds>(tStop - tStart);

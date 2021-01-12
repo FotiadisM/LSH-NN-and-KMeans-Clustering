@@ -27,25 +27,36 @@ private:
     LSH *lsh = nullptr;
     HyperCube *cube = nullptr;
     std::vector<std::vector<uint8_t>> centroids;
+    std::vector<std::vector<uint16_t>> centroidsNewSpace;
 
     void initCentroids();
+    void initCentroidsNewSpace();
     uint32_t minDistancefromCentroids(const std::vector<uint8_t> &point);
+    uint32_t minDistancefromCentroidsNewSpace(const std::vector<uint16_t> &point);
+    
     int findNextCentroid(const std::vector<double> &P, const double x); // used only for initalization
+    
     int median(std::vector<uint8_t> &v);
+    int medianNewSpace(std::vector<uint16_t> &v);
+    
     int minCentroid(const std::vector<uint8_t> &point);
+    int minCentroidNewSpace(const std::vector<uint16_t> &point);
+
     int nextCentroid(const std::vector<uint8_t> &point);
-    void print(const std::vector<std::vector<int>> &clusters, std::ofstream &outputFile, int64_t time, std::vector<double> silouette);
+    int nextCentroidNewSpace(const std::vector<uint16_t> &point);
+
+    void print(const std::vector<std::vector<int>> &clusters, std::ofstream &outputFile, int64_t time, std::vector<double> silouette, std::vector<double> silouetteClassification, std::vector<double> silouetteNewSpace);
 
     std::vector<std::vector<int>> LloydsClustering();
-    std::vector<std::vector<int>> LSHClustering();
-    std::vector<std::vector<int>> HyperCubeClustering();
+    // std::vector<std::vector<int>> LSHClustering();
+    // std::vector<std::vector<int>> HyperCubeClustering();
 
     std::vector<double> Silouette(std::vector<std::vector<int>> clusters);
 
 public:
     kmeansplusplus(const int &clusters, const bool &complete, Data &data);
-    kmeansplusplus(const int &clusters, const bool &complete, const int &lsh_k, const int &L, Data &data);
-    kmeansplusplus(const int &clusters, const bool &complete, const int &cube_k, const int &M, const int &probes, Data &data);
+    // kmeansplusplus(const int &clusters, const bool &complete, const int &lsh_k, const int &L, Data &data);
+    // kmeansplusplus(const int &clusters, const bool &complete, const int &cube_k, const int &M, const int &probes, Data &data);
     ~kmeansplusplus();
 
     int Run(std::ofstream &outputFile);

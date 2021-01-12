@@ -24,6 +24,16 @@ Input::~Input()
         queryFile.close();
     }
 
+    if (inputFileNewSpace.is_open())
+    {
+        inputFileNewSpace.close();
+    }
+
+    if (queryFileNewSpace.is_open())
+    {
+        queryFileNewSpace.close();
+    }
+
     if (outputFile.is_open())
     {
         outputFile.close();
@@ -68,12 +78,47 @@ int Input::OpenQueryFile(const string &file)
     return 0;
 }
 
+int Input::OpenInputFileNewSpace(const string &file)
+{
+    this->inputFileNewSpace.open(file, ifstream::in | ifstream::binary);
+    if (!this->inputFileNewSpace)
+    {
+        perror("open()");
+    }
+
+    return 0;
+}
+
+int Input::OpenQueryFileNewSpace(const string &file)
+{
+    this->queryFileNewSpace.open(file, ifstream::in | ifstream::binary);
+    if (!this->queryFileNewSpace)
+    {
+        perror("open()");
+    }
+
+    return 0;
+}
+
+int Input::OpenInputFileClassification(const std::string &file)
+{
+    this->inputFileClassification.open(file, ifstream::in | ifstream::binary);
+    if (!this->inputFileClassification)
+    {
+        perror("open()");
+    }
+
+    return 0;
+}
+
+
 int Input::parseCmdOptions(const int &argc, char *argv[])
 {
     char *val = nullptr;
     string str = argv[0];
 
-    if ((val = this->getCmdOption(argv, argv + argc, "-i")) != nullptr)
+    // open input file old space
+    if ((val = this->getCmdOption(argv, argv + argc, "-d")) != nullptr)
     {
         try
         {
@@ -86,6 +131,21 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
         }
     }
 
+    // open input file new space
+    if ((val = this->getCmdOption(argv, argv + argc, "-i")) != nullptr)
+        {
+            try
+            {
+                this->inputFileNewSpace.open(val, ifstream::in | ifstream::binary);
+            }
+            catch (const ifstream::failure &e)
+            {
+                perror("open()");
+                cerr << "Failed to open " << val << endl;
+            }
+        }
+
+    // open output file
     if ((val = this->getCmdOption(argv, argv + argc, "-o")) != nullptr)
     {
         try
@@ -112,6 +172,8 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
         }
     }
 
+
+
     if (string(argv[0]).find("cluster") != string::npos)
     {
         this->mode = _cluster;
@@ -120,6 +182,19 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
         this->cube_k = 3;
         this->M = 10;
         this->probes = 2;
+
+        if ((val = this->getCmdOption(argv, argv + argc, "-n")) != nullptr)
+        {
+            try
+            {
+                this->inputFileClassification.open(val, ifstream::in | ifstream::binary);
+            }
+            catch (const ifstream::failure &e)
+            {
+                perror("open()");
+                cerr << "Failed to open " << val << endl;
+            }
+        }
 
         if ((val = this->getCmdOption(argv, argv + argc, "-c")) != nullptr)
         {
@@ -156,18 +231,6 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
                 {
                     this->lsh_k = stoi(options[1]);
                 }
-                else if (!options[0].compare("max_number_M_hypercube:"))
-                {
-                    this->M = stoi(options[1]);
-                }
-                else if (!options[0].compare("number_of_hypercube_dimensions:"))
-                {
-                    this->cube_k = stoi(options[1]);
-                }
-                else if (!options[0].compare("number_of_probes:"))
-                {
-                    this->probes = stoi(options[1]);
-                }
                 else
                 {
                     cout << "unknown option in .conf file" << endl;
@@ -187,13 +250,8 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
             this->complete = true;
         }
 
-        if ((val = this->getCmdOption(argv, argv + argc, "-m")) != nullptr)
-        {
-            if (this->method == nullptr)
-            {
-                this->method = strdup(val);
-            }
-        }
+        this->method = strdup("Classic");
+
     }
     else
     {
@@ -205,6 +263,20 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
             try
             {
                 this->queryFile.open(val, ifstream::in);
+            }
+            catch (const ifstream::failure &e)
+            {
+                perror("open()");
+                cerr << "Failed to open " << val << endl;
+                return -1;
+            }
+        }
+
+        if ((val = this->getCmdOption(argv, argv + argc, "-s")) != nullptr)
+        {
+            try
+            {
+                this->queryFileNewSpace.open(val, ifstream::in);
             }
             catch (const ifstream::failure &e)
             {
@@ -240,28 +312,7 @@ int Input::parseCmdOptions(const int &argc, char *argv[])
                 sscanf(val, "%d", &(this->lsh_k));
             }
         }
-        else
-        {
-            this->mode = _cube;
-            this->cube_k = 14;
-            this->M = 10;
-            this->probes = 2;
 
-            if ((val = this->getCmdOption(argv, argv + argc, "-k")) != nullptr)
-            {
-                sscanf(val, "%d", &(this->cube_k));
-            }
-
-            if ((val = this->getCmdOption(argv, argv + argc, "-M")) != nullptr)
-            {
-                sscanf(val, "%d", &(this->M));
-            }
-
-            if ((val = this->getCmdOption(argv, argv + argc, "-probes")) != nullptr)
-            {
-                sscanf(val, "%d", &(this->probes));
-            }
-        }
     }
 
     return 0;

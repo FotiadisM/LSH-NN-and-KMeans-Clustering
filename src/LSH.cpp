@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <unordered_set>
+#include <bits/stdc++.h> 
 
 #include "../include/LSH.h"
 #include "../include/hashTable.h"
@@ -33,22 +34,47 @@ LSH::~LSH()
 
 int LSH::Run(const vector<vector<uint8_t>> &queries, ofstream &outputFile, const int &N, const int &R)
 {
+    double tLSH = 0;
+    double tTrue = 0;
+    double tReduced = 0;
+    clock_t start, end;
+
+    double approximationFactorLSH = 0.0;
+    double approximationFactorReduced = 0.0;
+
     for (int i = 0; i < int(queries.size()); i++)
     {
-        auto lshStart = chrono::high_resolution_clock::now();
+        start = clock();
         vector<pair<int, int>> lshResult = this->exec_query(queries[i], N);
-        auto lshStop = chrono::high_resolution_clock::now();
+        end = clock();
 
-        auto tLSH = chrono::duration_cast<chrono::milliseconds>(lshStop - lshStart);
+        tLSH = tLSH + double(end - start) / double(CLOCKS_PER_SEC);
 
-        auto tStart = chrono::high_resolution_clock::now();
-        vector<pair<int, int>> trueResult = this->data.BruteFroceNeighbors(queries[i], N);
-        auto tStop = chrono::high_resolution_clock::now();
+        start = clock();
+        vector<pair<int, int>> trueResult = this->data.BruteForceNeighbors(queries[i], N);
+        end = clock();
 
-        auto tTrue = chrono::duration_cast<chrono::milliseconds>(tStop - tStart);
+        tTrue = tTrue + double(end - start) / double(CLOCKS_PER_SEC);
 
-        this->print(outputFile, i, lshResult, trueResult, tLSH.count(), tTrue.count(), this->data.RangeSearch(queries[i], R));
+        start = clock();
+        vector<pair<int, int>> reducedResult = this->data.BruteForceNeighborsNewSpace(data.newSpaceQueries[i], N);
+        end = clock();
+
+        tReduced = tReduced + double(end - start) / double(CLOCKS_PER_SEC);
+        approximationFactorLSH = approximationFactorLSH + (double)lshResult[0].first / (double)trueResult[0].first;
+
+        approximationFactorReduced = approximationFactorReduced + 
+        (double)data.ManhattanDistance(this->data.data[reducedResult[0].second], this->data.data[trueResult[0].second]) / (double)trueResult[0].first;
+
+        this->print(outputFile, i, lshResult, trueResult, this->data.RangeSearch(queries[i], R), reducedResult);
     }
+
+    outputFile << "time Reduced " << tReduced << setprecision(10) << endl;
+    outputFile << "time LSH " << tLSH << setprecision(10) << endl;
+    outputFile << "time True " << tTrue << setprecision(10) << endl;
+
+    outputFile << "approximation factor LSH : " << approximationFactorLSH / queries.size() << endl;
+    outputFile << "approximation factor Reduced : " << approximationFactorReduced / queries.size() << endl;
 
     return 0;
 }
@@ -93,30 +119,27 @@ vector<pair<int, int>> LSH::exec_query(const vector<uint8_t> &query, const int &
             if (pickedPoints.find(point.first) == pickedPoints.end()) // exclude duplicate points
             {
                 pickedPoints.insert(point.first);
-                possible_neighbors.emplace_back(point.first, point.second);
+                if (point.second.get() != query)
+                    possible_neighbors.emplace_back(point.first, point.second);
             }
         }
     }
 
     return this->data.GetClosestNeighbors(query, possible_neighbors, N);
 }
-void LSH::print(ofstream &outputFile, const int &query, vector<pair<int, int>> lshResult, vector<std::pair<int, int>> trueResult, const int64_t &tLSH, const int64_t &tTrue, vector<std::pair<int, int>> rangeSearch)
+
+
+void LSH::print(ofstream &outputFile, const int &query, vector<pair<int, int>> lshResult, vector<std::pair<int, int>> trueResult, vector<std::pair<int, int>> rangeSearch, vector<std::pair<int, int>> reducedResult)
 {
     outputFile << "Query: " << query << endl;
 
     for (int i = 0; i < int(lshResult.size()); i++)
     {
-        outputFile << "Nearest neighbor-" << i << ": " << lshResult[i].second << endl;
+        outputFile << "nearest neighbor Reduced : " << reducedResult[i].second << endl;
+        outputFile << "nearest neighbor LSH: " << lshResult[i].second << endl;
+        outputFile << "nearest neighbor True: " << trueResult[i].second << endl;
+        outputFile << "distanceReduced: " << data.ManhattanDistance(this->data.data[query], this->data.data[reducedResult[i].second]) << endl;
         outputFile << "distanceLSH: " << lshResult[i].first << endl;
-        outputFile << "distanceTrue: " << trueResult[i].first << endl;
-    }
-
-    outputFile << "tLSH: " << tLSH << endl;
-    outputFile << "tTrue: " << tTrue << endl;
-    outputFile << "R-near neighbors:" << endl;
-
-    for (const auto &point : rangeSearch)
-    {
-        outputFile << point.second << endl;
+        outputFile << "distanceTrue: " << trueResult[i].first << endl << endl;
     }
 }

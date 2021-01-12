@@ -23,6 +23,8 @@ public:
     bool complete = false;
     Mode mode;
     std::ifstream inputFile, queryFile;
+    std::ifstream inputFileClassification;
+    std::ifstream inputFileNewSpace, queryFileNewSpace;
     std::ofstream outputFile;
 
     Input();
@@ -31,5 +33,8 @@ public:
     int parseCmdOptions(const int &argc, char *argv[]);
 
     int OpenInputFile(const std::string &file);
+    int OpenInputFileNewSpace(const std::string &file);
     int OpenQueryFile(const std::string &file);
+    int OpenQueryFileNewSpace(const std::string &file);
+    int OpenInputFileClassification(const std::string &file);
 };

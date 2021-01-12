@@ -26,6 +26,8 @@ int main(int argc, char *argv[])
         string file;
         Data data;
 
+
+        // open input file old space
         while (!input.inputFile.is_open())
         {
             cout << "Please provide a path to an input file" << endl;
@@ -39,21 +41,34 @@ int main(int argc, char *argv[])
             return -1;
         }
 
+        // open input file new space
+        while (!input.inputFileNewSpace.is_open())
+        {
+            cout << "Please provide a path to an new space input file" << endl;
+            cin >> file;
+            input.OpenInputFileNewSpace(file);
+        }
+
+        if (data.InitMnistDataSetNewSpace(input.inputFileNewSpace) == -1)
+        {
+            cerr << "Data::InitMnistDataSet() failed" << endl;
+            return -1;
+        }
+
         if (input.mode == _cluster)
         {
+            while (!input.inputFileClassification.is_open())
+            {
+                cout << "Please provide a path to a classification data file" << endl;
+                cin >> file;
+                input.OpenInputFile(file);
+            }
+            data.InitDataSetClassification(input.inputFileClassification);
+            
             kmeansplusplus *kmeans;
-
             if (!strcmp(input.method, "Classic"))
             {
                 kmeans = new kmeansplusplus(input.nClusters, input.complete, data);
-            }
-            else if (!strcmp(input.method, "LSH"))
-            {
-                kmeans = new kmeansplusplus(input.nClusters, input.complete, input.lsh_k, input.L, data);
-            }
-            else if (!strcmp(input.method, "Hypercube"))
-            {
-                kmeans = new kmeansplusplus(input.nClusters, input.complete, input.cube_k, input.M, input.probes, data);
             }
             else
             {
@@ -68,6 +83,8 @@ int main(int argc, char *argv[])
         }
         else
         {
+
+            // open query file old space
             while (!input.queryFile.is_open())
             {
                 cout << "Please provide a path to an query file" << endl;
@@ -81,28 +98,30 @@ int main(int argc, char *argv[])
                 return -1;
             }
 
-            if (input.mode == _lsh)
+            // open query file new space
+            while (!input.queryFileNewSpace.is_open())
             {
-                LSH *lsh = new LSH(input.lsh_k, input.L, data, 10000, 200);
-
-                if (lsh->Run(data.queries, input.outputFile, input.N, input.R) == -1)
-                {
-                    cerr << "LSH::Run() failed" << endl;
-                }
-
-                delete lsh;
+                cout << "Please provide a path to queryFileNewSpace" << endl;
+                cin >> file;
+                input.OpenQueryFileNewSpace(file);
             }
-            else
+
+            if (data.ReadQueryFileNewSpace(input.queryFileNewSpace) == -1)
             {
-                HyperCube *hc = new HyperCube(floor(log2(data.n)), input.M, input.probes, data);
-
-                if (hc->Run(data.queries, input.outputFile, input.N, input.R) == -1)
-                {
-                    cerr << "HyperCube::hyperCubeRun() failed!" << endl;
-                }
-
-                delete hc;
+                cerr << "Data::ReadQueryFileNewSpace() failed" << endl;
+                return -1;
             }
+
+
+            LSH *lsh = new LSH(input.lsh_k, input.L, data);
+
+            if (lsh->Run(data.queries, input.outputFile, 1, input.R) == -1)
+            {
+                cerr << "LSH::Run() failed" << endl;
+            }
+
+            delete lsh;
+            
         }
 
         string str;

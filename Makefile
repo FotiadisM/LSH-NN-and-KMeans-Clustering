@@ -37,10 +37,12 @@ $(BDIR)/$(EXEC3): $(OBJ)
 
 run-lsh:
 	./$(BDIR)/$(EXEC1) \
-	-i ./assets/t10k \
+	-d ./assets/t10k \
+	-i ../project3/output_dataset \
 	-q ./assets/queryFile \
+	-s ../project3/output_queryset \
 	-o ./logs/logs.txt \
-	-N 50
+	-N 1
 
 valgrind-lsh:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC1) \
@@ -49,48 +51,21 @@ valgrind-lsh:
 	-o ./logs/logs.txt \
 	-N 10
 
-run-hc:
-	./$(BDIR)/$(EXEC2) \
-	-i ./assets/t10k \
-	-q ./assets/queryFile \
-	-o ./logs/logs.txt \
-	-N 50
-
-valgrind-hc:
-	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC2) \
-	-i ./assets/t10k \
-	-q ./assets/queryFile \
-	-o ./logs/logs.txt \
-	-N 50
-
 run-cluster-classic:
 	./$(BDIR)/$(EXEC3) \
-	-i ./assets/t10k \
+	-d ./assets/t10k \
+	-i ../project3/output_dataset \
+	-n ../Neural-Net/cluster_dataset \
 	-c ./cluster.conf \
-	-o ./logs/logs.txt \
-	-m Classic
-
-run-cluster-lsh:
-	./$(BDIR)/$(EXEC3) \
-	-i ./assets/t10k \
-	-c ./cluster.conf \
-	-o ./logs/logs.txt \
-	-m LSH
-
-run-cluster-hc:
-	./$(BDIR)/$(EXEC3) \
-	-i ./assets/t10k \
-	-c ./cluster.conf \
-	-o ./logs/logs.txt \
-	-m Hypercube
+	-o ./logs/logs.txt
 
 valgrind-cluster:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./$(BDIR)/$(EXEC3) \
-	-i ./assets/t10k \
+	-d ./assets/t10k \
+	-i ../project3/output_dataset \
+	-n ../Neural-Net/cluster_dataset \
 	-c ./cluster.conf \
-	-o ./logs/logs.txt \
-	-m LSH
-
+	-o ./logs/logs.txt
 clean:
 	rm -f $(ODIR)/*.o
 	rm -f $(BDIR)/$(EXEC1)
