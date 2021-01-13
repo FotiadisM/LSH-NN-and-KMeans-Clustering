@@ -54,8 +54,8 @@ valgrind-lsh:
 run-cluster-classic:
 	./$(BDIR)/$(EXEC3) \
 	-d ./assets/t10k \
-	-i ../project3/output_dataset \
-	-n ../Neural-Net/cluster_dataset \
+	-i ./assets/output_dataset \
+	-n ./assets/cluster_dataset \
 	-c ./cluster.conf \
 	-o ./logs/logs.txt
 

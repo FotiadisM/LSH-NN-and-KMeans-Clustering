@@ -75,7 +75,6 @@ int Data::InitMnistDataSet(std::ifstream &inputFile)
     return 0;
 }
 
-
 int Data::InitMnistDataSetNewSpace(std::ifstream &inputFile)
 {
     int32_t a = 0;
@@ -143,13 +142,13 @@ int Data::InitMnistDataSetNewSpace(std::ifstream &inputFile)
     return 0;
 }
 
-
 int Data::InitDataSetClassification(std::ifstream &inputFile)
 {
     int32_t a = 0;
     int dimensions[10];
 
-    for (int i=0; i<=9; i++) {
+    for (int i = 0; i <= 9; i++)
+    {
         inputFile.read((char *)(&a), sizeof(a));
         if (!inputFile)
         {
@@ -161,9 +160,10 @@ int Data::InitDataSetClassification(std::ifstream &inputFile)
 
     int toggle = 0;
     vector<vector<int>> temp(10);
-    int j=0;
+    int j = 0;
 
-    for (int i=0; i<this->n; i++) {
+    for (int i = 0; i < this->n; i++)
+    {
 
         inputFile.read((char *)(&a), sizeof(a));
         if (!inputFile)
@@ -174,11 +174,11 @@ int Data::InitDataSetClassification(std::ifstream &inputFile)
 
         temp[toggle].push_back(a);
         j++;
-        if ( j == dimensions[toggle] ) {
+        if (j == dimensions[toggle])
+        {
             toggle++;
-            j=0;
+            j = 0;
         }
-
     }
 
     this->classificationClusters = temp;
@@ -191,22 +191,45 @@ int Data::InitDataSetClassification(std::ifstream &inputFile)
     return 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 int Data::ReadQueryFile(std::ifstream &queryFile)
 {
     int count = 0;
     uint8_t b;
     vector<uint8_t> point(this->d);
+
+    int a;
+    //  magic number
+    queryFile.read((char *)(&a), sizeof(a));
+    if (!queryFile)
+    {
+        cerr << "Input file io error" << endl;
+        return -1;
+    }
+
+    // number of images
+    queryFile.read((char *)(&a), sizeof(a));
+    if (!queryFile)
+    {
+        cerr << "Input file io error" << endl;
+        return -1;
+    }
+
+    // from big endian to low endian
+    cout << "number of queries: " << __builtin_bswap32(a) << endl;
+
+    queryFile.read((char *)(&a), sizeof(a));
+    if (!queryFile)
+    {
+        cerr << "Input file io error" << endl;
+        return -1;
+    }
+
+    queryFile.read((char *)(&a), sizeof(a));
+    if (!queryFile)
+    {
+        cerr << "Input file io error" << endl;
+        return -1;
+    }
 
     while (1)
     {
@@ -231,7 +254,6 @@ int Data::ReadQueryFile(std::ifstream &queryFile)
 
     return 0;
 }
-
 
 int Data::ReadQueryFileNewSpace(std::ifstream &queryFile)
 {
@@ -262,7 +284,6 @@ int Data::ReadQueryFileNewSpace(std::ifstream &queryFile)
 
     return 0;
 }
-
 
 int Data::EuclideanDistance(std::vector<uint8_t> &p1, std::vector<uint8_t> &p2)
 {

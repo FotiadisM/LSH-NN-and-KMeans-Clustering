@@ -11,7 +11,6 @@
 
 using namespace std;
 
-
 // classic
 kmeansplusplus::kmeansplusplus(const int &mClusters, const bool &complete, Data &mData)
     : nClusters(mClusters), complete(complete), data(mData)
@@ -76,7 +75,6 @@ int kmeansplusplus::Run(ofstream &outputFile)
 
     // // new space
 
-
     start = chrono::high_resolution_clock::now();
 
     totalChange = this->minChange + 1;
@@ -120,15 +118,13 @@ int kmeansplusplus::Run(ofstream &outputFile)
     // auto stop = chrono::high_resolution_clock::now();
     stop = chrono::high_resolution_clock::now();
     cout << "Iterations: " << iterations << endl;
-    
+
     auto newSpaceDuration = chrono::duration_cast<chrono::milliseconds>(stop - start);
 
-
-    this->print(clusters, outputFile, duration.count(), this->Silouette(clusters), this->Silouette(this->data.classificationClusters), this->SilouetteNewSpace(clustersNewSpace), newSpaceDuration.count());
+    this->print(clusters, outputFile, duration.count(), this->Silouette(clusters), this->Silouette(this->data.classificationClusters), this->SilouetteNewSpace(clustersNewSpace), newSpaceDuration.count(), this->objectiveFuntion(clusters), this->objectiveFuntion(clustersNewSpace));
 
     return 0;
 }
-
 
 void kmeansplusplus::initCentroids()
 {
@@ -164,7 +160,6 @@ void kmeansplusplus::initCentroids()
     }
 }
 
-
 void kmeansplusplus::initCentroidsNewSpace()
 {
     default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
@@ -199,7 +194,6 @@ void kmeansplusplus::initCentroidsNewSpace()
     }
 }
 
-
 uint32_t kmeansplusplus::minDistancefromCentroids(const vector<uint8_t> &point)
 {
     vector<int> D;
@@ -223,9 +217,6 @@ uint32_t kmeansplusplus::minDistancefromCentroidsNewSpace(const vector<uint16_t>
 
     return (D.size() == 0) ? 0 : *min_element(begin(D), end(D));
 }
-
-
-
 
 int kmeansplusplus::findNextCentroid(const vector<double> &P, const double x)
 {
@@ -254,7 +245,6 @@ int kmeansplusplus::medianNewSpace(vector<uint16_t> &v)
     return (v.size() == 0 ? 0 : v[v.size() / 2]);
 }
 
-
 vector<vector<int>> kmeansplusplus::LloydsClustering()
 {
     vector<vector<int>> clusters(this->nClusters); // holds all data points for every centroid
@@ -279,7 +269,6 @@ vector<vector<int>> kmeansplusplus::LloydsClusteringNewSpace()
     return clusters;
 }
 
-
 int kmeansplusplus::minCentroid(const vector<uint8_t> &point)
 {
     int index = -1, minDistance = INT32_MAX;
@@ -296,7 +285,6 @@ int kmeansplusplus::minCentroid(const vector<uint8_t> &point)
 
     return index;
 }
-
 
 int kmeansplusplus::minCentroidNewSpace(const vector<uint16_t> &point)
 {
@@ -423,20 +411,49 @@ vector<double> kmeansplusplus::SilouetteNewSpace(vector<std::vector<int>> cluste
     return result;
 }
 
+int kmeansplusplus::objectiveFuntion(vector<vector<int>> clusters)
+{
+    //     // pigaine se ka8e cluster kai bres to median alla mias kai exw int 8a brw diko mou median mia mpam mpam
+    //     // kai meta upologizw oles tis apostaseis tou cluster apo auto antrika
 
-// int kmeansplusplus::objectiveFuntion(std::vector<std::vector<int>> clusters)
-// {
-//     // pigaine se ka8e cluster kai bres to median alla mias kai exw int 8a brw diko mou median mia mpam mpam
-//     // kai meta upologizw oles tis apostaseis tou cluster apo auto antrika
+    //     // paw briskw ta median kai meta se ka8e cluster a8roizw tis apostaseis twn eikonwn apo to median
+    //     // kai a8roizw sinolika ta clusters kai bgazw enan ari8mo
+    int total = 0;
 
-//     // paw briskw ta median kai meta se ka8e cluster a8roizw tis apostaseis twn eikonwn apo to median
-//     // kai a8roizw sinolika ta clusters kai bgazw enan ari8mo
-// }
+    for (const auto &cluster : clusters)
+    {
+        int clusterTotal = 0;
 
-void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &outputFile, int64_t time, vector<double> silouette, vector<double> silouetteClassification, std::vector<double> silouetteNewSpace, int64_t newSpaceTime)
+        for (int d = 0; d < this->data.d; d++)
+        {
+            vector<uint8_t> v;
+
+            for (const int &point : cluster)
+            {
+                v.push_back(this->data.data[point][d]);
+            }
+            int median = this->median(v);
+
+            int distanceFromMedian = 0;
+            for (const int &point : cluster)
+            {
+                distanceFromMedian += abs(int(this->data.data[point][d]) - median);
+            }
+
+            clusterTotal += distanceFromMedian;
+        }
+
+        total += clusterTotal;
+    }
+
+    return total;
+}
+
+void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &outputFile, int64_t time, vector<double> silouette, vector<double> silouetteClassification, std::vector<double> silouetteNewSpace, int64_t newSpaceTime, int obj1, int obj2)
 {
     // returnMedian(clusters[0]);
-    outputFile << "Algorithm: Llooyds\n\n" << endl;
+    outputFile << "Algorithm: Llooyds\n\n"
+               << endl;
 
     // for (int i = 0; i < this->nClusters; i++)
     // {
@@ -461,7 +478,6 @@ void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &output
     outputFile << "sstotal = " << sktotal / double(silouette.size()) << "]" << endl
                << endl;
 
-
     outputFile << "Silhouette classification : [";
     sktotal = 0;
     for (const double &i : silouetteClassification)
@@ -471,7 +487,6 @@ void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &output
     }
     outputFile << "stotal= " << sktotal / double(silouetteClassification.size()) << "]" << endl
                << endl;
-
 
     outputFile << "clustering_time new space : " << newSpaceTime << endl;
     outputFile << "Silhouette new space : [";
@@ -483,8 +498,6 @@ void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &output
     }
     outputFile << "stotal= " << sktotal / double(silouetteNewSpace.size()) << "]" << endl
                << endl;
-
-
 
     if (this->complete)
     {
@@ -499,4 +512,7 @@ void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &output
                        << endl; // annoying auto format
         }
     }
+
+    outputFile << "clusters total mean dists: " << obj1 << endl;
+    outputFile << "clustersNewSpace total mean dists: " << obj2 << endl;
 }
