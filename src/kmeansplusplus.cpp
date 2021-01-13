@@ -76,6 +76,9 @@ int kmeansplusplus::Run(ofstream &outputFile)
 
     // // new space
 
+
+    start = chrono::high_resolution_clock::now();
+
     totalChange = this->minChange + 1;
 
     this->initCentroidsNewSpace();
@@ -83,7 +86,7 @@ int kmeansplusplus::Run(ofstream &outputFile)
     iterations = 0;
     while (totalChange > this->minChange && iterations < this->maxIterations)
     {
-        clustersNewSpace = this->LloydsClustering();
+        clustersNewSpace = this->LloydsClusteringNewSpace();
 
         totalChange = 0;
         for (int i = 0; i < this->nClusters; i++)
@@ -115,10 +118,13 @@ int kmeansplusplus::Run(ofstream &outputFile)
     }
 
     // auto stop = chrono::high_resolution_clock::now();
+    stop = chrono::high_resolution_clock::now();
     cout << "Iterations: " << iterations << endl;
+    
+    auto newSpaceDuration = chrono::duration_cast<chrono::milliseconds>(stop - start);
 
 
-    this->print(clusters, outputFile, duration.count(), this->Silouette(clusters), this->Silouette(this->data.classificationClusters), this->Silouette(clustersNewSpace));
+    this->print(clusters, outputFile, duration.count(), this->Silouette(clusters), this->Silouette(this->data.classificationClusters), this->SilouetteNewSpace(clustersNewSpace), newSpaceDuration.count());
 
     return 0;
 }
@@ -163,7 +169,7 @@ void kmeansplusplus::initCentroidsNewSpace()
 {
     default_random_engine re(chrono::system_clock::now().time_since_epoch().count());
     // picking first centroid at random
-    this->centroidsNewSpace.push_back(this->data.newSpaceData[100]);
+    this->centroidsNewSpace.push_back(this->data.newSpaceData[rand() % this->data.n]);
 
     for (int i = 1; i < this->nClusters; i++)
     {
@@ -260,6 +266,19 @@ vector<vector<int>> kmeansplusplus::LloydsClustering()
 
     return clusters;
 }
+
+vector<vector<int>> kmeansplusplus::LloydsClusteringNewSpace()
+{
+    vector<vector<int>> clusters(this->nClusters); // holds all data points for every centroid
+
+    for (int i = 0; i < this->data.n; i++)
+    {
+        clusters[this->minCentroidNewSpace(this->data.newSpaceData[i])].push_back(i);
+    }
+
+    return clusters;
+}
+
 
 int kmeansplusplus::minCentroid(const vector<uint8_t> &point)
 {
@@ -367,10 +386,57 @@ vector<double> kmeansplusplus::Silouette(vector<std::vector<int>> clusters)
     return result;
 }
 
-void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &outputFile, int64_t time, vector<double> silouette, vector<double> silouetteClassification, std::vector<double> silouetteNewSpace)
+vector<double> kmeansplusplus::SilouetteNewSpace(vector<std::vector<int>> clusters)
 {
+    vector<double> result;
+    vector<int> ai = vector<int>(this->data.n, 0);
+    vector<int> bi = vector<int>(this->data.n, 0);
+    vector<double> si = vector<double>(this->data.n, 0);
 
-    outputFile << "Algorithm: Llooyds" << endl;
+    for (const auto &cluster : clusters)
+    {
+        for (const int &i : cluster)
+        {
+            for (const int &j : cluster)
+            {
+                if (i != j)
+                    ai[i] += this->data.distanceFunctionNewSpace(this->data.newSpaceData[i], this->data.newSpaceData[j]);
+            }
+
+            for (const int &j : clusters[this->nextCentroidNewSpace(this->data.newSpaceData[i])])
+            {
+                bi[i] += this->data.distanceFunctionNewSpace(this->data.newSpaceData[i], this->data.newSpaceData[j]);
+            }
+
+            si[i] = double(bi[i] - ai[i]) / double((ai[i] < bi[i]) ? bi[i] : ai[i]);
+        }
+
+        double mean = 0;
+
+        for (const int &i : cluster)
+        {
+            mean += si[i];
+        }
+        result.push_back(mean / double(cluster.size()));
+    }
+
+    return result;
+}
+
+
+// int kmeansplusplus::objectiveFuntion(std::vector<std::vector<int>> clusters)
+// {
+//     // pigaine se ka8e cluster kai bres to median alla mias kai exw int 8a brw diko mou median mia mpam mpam
+//     // kai meta upologizw oles tis apostaseis tou cluster apo auto antrika
+
+//     // paw briskw ta median kai meta se ka8e cluster a8roizw tis apostaseis twn eikonwn apo to median
+//     // kai a8roizw sinolika ta clusters kai bgazw enan ari8mo
+// }
+
+void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &outputFile, int64_t time, vector<double> silouette, vector<double> silouetteClassification, std::vector<double> silouetteNewSpace, int64_t newSpaceTime)
+{
+    // returnMedian(clusters[0]);
+    outputFile << "Algorithm: Llooyds\n\n" << endl;
 
     // for (int i = 0; i < this->nClusters; i++)
     // {
@@ -383,7 +449,7 @@ void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &output
     //                << endl; // annoying auto format
     // }
 
-    outputFile << "clustering_time: " << time << endl;
+    outputFile << "clustering_time original space : " << time << endl;
     outputFile << "Silhouette original space : [";
 
     double sktotal = 0;
@@ -406,6 +472,8 @@ void kmeansplusplus::print(const vector<vector<int>> &clusters, ofstream &output
     outputFile << "stotal= " << sktotal / double(silouetteClassification.size()) << "]" << endl
                << endl;
 
+
+    outputFile << "clustering_time new space : " << newSpaceTime << endl;
     outputFile << "Silhouette new space : [";
     sktotal = 0;
     for (const double &i : silouetteNewSpace)

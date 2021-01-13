@@ -45,18 +45,20 @@ private:
     int nextCentroid(const std::vector<uint8_t> &point);
     int nextCentroidNewSpace(const std::vector<uint16_t> &point);
 
-    void print(const std::vector<std::vector<int>> &clusters, std::ofstream &outputFile, int64_t time, std::vector<double> silouette, std::vector<double> silouetteClassification, std::vector<double> silouetteNewSpace);
+    void print(const std::vector<std::vector<int>> &clusters, std::ofstream &outputFile, int64_t time, std::vector<double> silouette, std::vector<double> silouetteClassification, std::vector<double> silouetteNewSpace, int64_t newSpaceTime);
 
     std::vector<std::vector<int>> LloydsClustering();
-    // std::vector<std::vector<int>> LSHClustering();
-    // std::vector<std::vector<int>> HyperCubeClustering();
+    std::vector<std::vector<int>> LloydsClusteringNewSpace();
 
     std::vector<double> Silouette(std::vector<std::vector<int>> clusters);
+    std::vector<double> SilouetteNewSpace(std::vector<std::vector<int>> clusters);
+
+    int objectiveFuntion(std::vector<std::vector<int>> clusters);
+
+    int returnMedian(std::vector<int> clusterIntRepresented);
 
 public:
     kmeansplusplus(const int &clusters, const bool &complete, Data &data);
-    // kmeansplusplus(const int &clusters, const bool &complete, const int &lsh_k, const int &L, Data &data);
-    // kmeansplusplus(const int &clusters, const bool &complete, const int &cube_k, const int &M, const int &probes, Data &data);
     ~kmeansplusplus();
 
     int Run(std::ofstream &outputFile);

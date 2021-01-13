@@ -144,11 +144,6 @@ int Data::InitMnistDataSetNewSpace(std::ifstream &inputFile)
 }
 
 
-
-
-
-
-
 int Data::InitDataSetClassification(std::ifstream &inputFile)
 {
     int32_t a = 0;
